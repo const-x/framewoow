@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="idv.constx.demo.common.dao.DocRelDao" >
+<!-- 返回内容定义 -->
+<resultMap id="docrelResult" type="DocRel" > 
+    <!-- 主键 -->
+    <id  property="id" javaType="Long" jdbcType="DECIMAL"  column="ID" />
+    <!-- (缓存文件)key值 -->
+    <result property="cacheKey" javaType="String" jdbcType="VARCHAR" column="CACHE_KEY" />
+    <!-- 创建人 -->
+    <result property="creater" javaType="Long" jdbcType="DECIMAL" column="CREATER" />
+    <!-- 最后修改人 -->
+    <result property="modifyer" javaType="Long" jdbcType="DECIMAL" column="MODIFYER" />
+    <!-- 创建时间 -->
+    <result property="createtime" javaType="String" jdbcType="CHAR" column="CREATETIME" />
+    <!-- 最后修改时间 -->
+    <result property="modifytime" javaType="String" jdbcType="CHAR" column="MODIFYTIME" />
+</resultMap>
+
+
+<!-- select内容 -->
+<sql id="select">
+   select a.ID ,a.CACHE_KEY ,a.CREATER ,a.MODIFYER ,a.CREATETIME ,a.MODIFYTIME 
+   from BASE_DOC_REL a 
+</sql>
+
+<!--版本验证-->
+<select id="findLastModifyTime" parameterType="java.lang.reflect.Array" resultMap="docrelResult" > 
+   select ID,MODIFYTIME from BASE_DOC_REL where ID in
+   <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+       #{item}
+	</foreach>
+</select>
+
+<!--查询操作-->
+<select id="findById" parameterType="Long" resultMap="docrelResult" > 
+    <include refid="select"/>
+    where a.ID =  #{id}
+</select>
+
+<select id="findByIds" parameterType="java.lang.reflect.Array" resultMap="docrelResult" > 
+    <include refid="select"/>
+    where a.ID in 
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")"> 
+       #{item}
+    </foreach>
+</select>
+
+<!--保存操作-->
+<insert id="save" parameterType="DocRel"   useGeneratedKeys="true" keyProperty="id"  > 
+    insert into BASE_DOC_REL
+          (CACHE_KEY ,CREATER ,MODIFYER ,CREATETIME ,MODIFYTIME ) 
+    values
+          (#{cacheKey,jdbcType=VARCHAR},#{creater,jdbcType=DECIMAL},#{modifyer,jdbcType=DECIMAL},#{createtime,jdbcType=CHAR},
+          #{modifytime,jdbcType=CHAR})
+</insert>
+
+<!--删除操作-->
+<delete id="delete" parameterType="java.lang.reflect.Array">
+    delete from BASE_DOC_REL where ID in 
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")"> 
+       #{item}
+    </foreach>
+</delete>
+
+
+</mapper>

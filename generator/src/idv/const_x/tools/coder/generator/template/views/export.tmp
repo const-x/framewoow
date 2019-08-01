@@ -1,0 +1,28 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+	trimDirectiveWhitespaces="true"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+<form  id="@{componentlower}ExportFm" method="post" action="<%=basePath%>/@{componentlower}/export">
+  <div class='dialogContentpanel'> 
+    <div class="searchPanel"  >
+    <h2 class="contentTitle">筛选条件</h2>
+	    <table>
+	      <tr>
+	        <td>
+	        	<ul>
+@{conditions}
+	        	</ul>		
+	        </td>
+	      </tr>
+	    </table>
+    </div>
+    <c:import url="/WEB-INF/views/common/fieldSelect.jsp"></c:import>
+  </div>
+  <div class="dialogButtonpanel buttonPanel">  
+	     <p  style="float:right;text-decoration:none;">
+			<input type='submit' value='确定' class='easyui-linkbutton'  >
+			<input class='easyui-linkbutton' value='关闭'  onclick='closeCurDialog(event)'>
+		 </p>	
+  </div>
+</form>
+ 
+     

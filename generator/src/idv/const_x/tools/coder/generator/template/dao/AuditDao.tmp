@@ -1,0 +1,36 @@
+	/**
+	 * 根据id查询审批记录
+	 * 
+	 * @param id 实体ID
+	 * @return List<OperationHistoryEntity>
+	 *
+	 */
+	List<OperationHistoryEntity> findAuditByPage(@Param(value = "id") Long id,@Param(value = "page") Page page);
+	
+	
+	/**
+	 * 根据id删除审批记录
+	 * 
+	 * @param id 实体ID
+	 *
+	 */
+	void deleteAuditById(@Param(value = "ids") Long ...ids);
+	
+            
+	/**
+	 * 保存@{entityAlias}审批记录
+	 * 
+	 * @param @{entryFristlower}s 实体内容
+	 *
+	 */
+	void saveAudit(OperationHistoryEntity @{entryFristlower}Audit);
+    
+    /**
+     
+    /**
+	 * 更新审批状态
+	 *
+	 */
+	void updateAudit(@Param(value = "id") Long id, @Param(value = "audit")  Integer audit,
+	                 @Param(value = "audittime")  String audittime,@Param(value = "auditer")  Long auditer);
+    

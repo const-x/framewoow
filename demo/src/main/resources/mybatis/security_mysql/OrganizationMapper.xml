@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.constx.demo.security.dao.OrganizationDao">
+
+	<resultMap id="orgResult" type="Organization">
+	    <id column="id" jdbcType="DECIMAL" property="id" />
+	    <result property="name" jdbcType="VARCHAR" column="name"/>
+	    <result property="code" jdbcType="VARCHAR" column="code"/>
+		<result property="description"  jdbcType="VARCHAR" column="description"/>
+		<association property="parent" javaType="Organization" 
+				column="parent_id" select="get"/>
+	</resultMap>
+	
+	
+	<sql id="select">
+		select id,code,name,description,parent_id from security_organization
+	</sql>
+	
+	<select id="findAllWithCache" resultMap="orgResult">
+		<include refid="select"/>
+	</select>
+	
+	<select id="get" parameterType="Long" resultMap="orgResult">
+		select * from security_organization where id = #{id}
+	</select>
+	
+    <select id="getByParent" parameterType="Long" resultMap="orgResult">
+		select * from security_organization where parent_id = #{parentId}
+	</select>
+	
+	<select id="findByParentIdPage" parameterType="map" resultMap="orgResult">
+		<include refid="select"/>
+		<where>
+			<if test="parentId!=null">
+				parent_id = #{parentId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByParentIdAndKeywordsPage" parameterType="map" resultMap="orgResult">
+		<include refid="select"/>
+		<where>
+			<if test="parentId!=null">
+				parent_id = #{parentId}
+			</if>
+			<if test="name!=null">
+				name like '%'||#{name}||'%'
+			</if>
+		</where>
+		
+	</select>
+	
+	
+	<delete id="delete" parameterType="Long">
+		delete from security_organization
+		<where>
+			<if test="id!=null">
+				id = #{id}
+			</if>
+		</where>
+	</delete>
+	
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="id"  parameterType="Organization">
+		insert into security_organization(code,name,description,parent_id )values(
+			#{code},#{name},#{description},#{parent.id}
+		)
+	</insert>
+	
+	<update id="update" parameterType="Organization">
+		update security_organization 
+		set name = #{name} ,code = #{code} ,   description = #{description} , parent_id = #{parent.id} 
+		<where>
+			<if test="id!=null">
+				id = #{id}
+			</if>
+		</where>
+	</update>
+	
+	
+</mapper>

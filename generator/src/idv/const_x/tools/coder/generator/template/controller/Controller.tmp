@@ -1,0 +1,207 @@
+package @{package}.@{modulelower}.controller;
+
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import @{package}.base.controller.BaseControlller;
+import @{package}.@{modulelower}.entity.@{entryFristUpper};
+import @{package}.@{modulelower}.view.@{entryFristUpper}View;
+import @{package}.@{modulelower}.service.@{componentFristUpper}Service;
+import @{package}.@{modulelower}.service.@{entryFristUpper}Condition;
+import @{package}.security.entity.User;
+import @{package}.util.dwz.AjaxObject;
+import @{package}.util.dwz.Page;
+import @{package}.common.exception.ExceptionUtils;
+@{imports}
+
+/**
+ * @{componentAlias}
+ * @author @{author}
+ * @since @{date}
+ */
+@Controller
+@RequestMapping("/@{componentlower}")
+public class @{componentFristUpper}Controller extends BaseControlller {
+
+	private static final String INDEX = "/@{modulelower}/@{componentlower}/index";
+
+	private static final String CREATE = "/@{modulelower}/@{componentlower}/create";
+
+	private static final String UPDATE = "/@{modulelower}/@{componentlower}/update";
+	
+
+	@Autowired
+	private @{componentFristUpper}Service @{componentFristLower}Service;
+	
+@{autowireds}
+    
+    // -查询-------------------------------------------------
+	@RequestMapping(value = "/index",method = { RequestMethod.GET})
+	@RequiresPermissions("@{componentlower}:view")
+	public String index(HttpServletRequest request, Map<String, Object> map) {
+		try {
+		    //设置初始查询条件
+		    @{entryFristUpper}Condition condition = new @{entryFristUpper}Condition();
+		    map.put("condition", condition);
+		    	if(super.hasPermission("@{componentlower}:edit")){
+				map.put("editPermission", "1");
+			}
+		    if(super.hasPermission("@{componentlower}:submit")){
+				map.put("submitPermission", "1");
+			}
+		    if(super.hasPermission("@{componentlower}:audit")){
+				map.put("auditPermission", "1");
+			}
+			return INDEX;
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+	}
+ 
+    @RequestMapping(value = "/list", method = { RequestMethod.POST })
+	@RequiresPermissions("@{componentlower}:view")
+	public @ResponseBody String index(@{entryFristUpper}Condition condition, Page page, HttpServletRequest request, Map<String, Object> map) {
+	    AjaxObject ajaxObject = new AjaxObject();
+		try {
+			List<@{entryFristUpper}> @{entryFristlower}s = @{componentFristLower}Service.getByCondition(condition,page);
+			List<@{entryFristUpper}View> views = new ArrayList<@{entryFristUpper}View>(@{entryFristlower}s.size());
+			for (@{entryFristUpper} @{entryFristlower} : @{entryFristlower}s) {
+				@{entryFristUpper}View view = new @{entryFristUpper}View(@{entryFristlower});
+				convertFileToUrl(view);
+				views.add(view);
+			}
+			ajaxObject.setData(page, views);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("数据获取失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+ 
+ 
+ 
+    // -新增-------------------------------------------------
+	@RequiresPermissions("@{componentlower}:save")
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public String preCreate(Map<String, Object> map) {
+	    try {
+@{beforecreate}
+            return CREATE;
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}	    
+	}
+
+	@RequiresPermissions("@{componentlower}:save")
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public @ResponseBody String create(@{entryFristUpper} @{entryFristlower}, HttpServletRequest request) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+			this.saveFileRel(@{entryFristlower});
+			@{componentFristLower}Service.save(@{entryFristlower});
+			ajaxObject.refreshTab("info_@{componentlower}", "添加成功！");
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("添加失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+
+    
+    // -修改-------------------------------------------------
+	@RequiresPermissions("@{componentlower}:edit")
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+	public String preUpdate(HttpServletRequest request,@PathVariable Long id, Map<String, Object> map) {
+		try {
+@{beforeupdate}		    
+			@{entryFristUpper} @{entryFristlower} = @{componentFristLower}Service.getForUpdate(id);
+			@{entryFristUpper}View view = new @{entryFristUpper}View(@{entryFristlower});
+			convertFileToUrl(view);
+			map.put("@{entrylower}", view);
+			return UPDATE;
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+	}
+
+	@RequiresPermissions("@{componentlower}:edit")
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public @ResponseBody String update(@{entryFristUpper} @{entryFristlower},HttpServletRequest request) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+			this.saveFileRel(@{entryFristlower});
+			@{componentFristLower}Service.update(@{entryFristlower});
+			ajaxObject.refreshTab("info_@{componentlower}", "修改成功！");
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("修改失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+    
+    // -删除-------------------------------------------------
+	@RequiresPermissions("@{componentlower}:delete")
+	@RequestMapping(value = "/delete/{ids}", method = RequestMethod.GET)
+	public @ResponseBody String delete(@PathVariable String ids,HttpServletRequest request) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+		    String[] cid = ids.split(",");
+		    Long[] @{entryFristlower}Ids = new Long[cid.length];
+		    for(int i = 0 ; i < cid.length; i++){
+		    	@{entryFristlower}Ids[i] = Long.valueOf(cid[i]);
+		    }
+		    
+		    List<@{entryFristUpper}> @{entryFristlower}s = @{componentFristLower}Service.getByIds(@{entryFristlower}Ids);
+			@{componentFristLower}Service.delete(@{entryFristlower}Ids);
+			this.delFileRel(@{entryFristlower}s.toArray(new @{entryFristUpper}[0]));
+		
+			ajaxObject.refreshTab("info_@{componentlower}", "删除成功！");
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("删除失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+
+	
+@{expands} 	
+
+@{refs}
+  
+@{viewpic} 
+
+@{viewText} 
+
+	
+	// 图片转换
+	private void convertFileToUrl(@{entryFristUpper}View view) {
+@{convert2url}
+	}
+
+	private void saveFileRel(@{entryFristUpper} entry) {
+@{saverel}
+	}
+
+	private void delFileRel(@{entryFristUpper}... entrys) {
+		for (@{entryFristUpper} entry : entrys) {
+@{delrel}
+		}
+	}
+
+
+  
+}

@@ -1,0 +1,12 @@
+
+	@RequiresPermissions("@{componentlower}:view")
+	@RequestMapping(value = "/@{field}/{id}", method = RequestMethod.GET)
+	public String view@{fieldFirstUpper}(@PathVariable Long id, Map<String, Object> map) {
+		try {
+			@{entryFristUpper} @{entryFristlower} = @{componentFristLower}Service.getForUpdate(id);
+			String text = @{entryFristlower}.get@{fieldFirstUpper}();
+			return super.viewRichText(text, map);
+		} catch (Exception e) {
+			return super.alert("系统错误", e, map);
+		}
+	}

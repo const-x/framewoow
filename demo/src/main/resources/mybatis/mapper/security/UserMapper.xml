@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.constx.demo.security.dao.UserDao">
+
+	<resultMap id="userResult" type="User">
+		<result property="id" column="id" jdbcType="DECIMAL"/>
+		<result property="realname" column="realname" jdbcType="VARCHAR"/>
+		<result property="username" column="username" jdbcType="VARCHAR"/>
+		<result property="password" column="password" jdbcType="VARCHAR"/>
+		<result property="salt" column="salt" jdbcType="VARCHAR" />
+		<result property="phone" column="phone" jdbcType="VARCHAR"/>
+		<result property="email" column="email" jdbcType="VARCHAR"/>
+		<result property="createTime" column="create_time" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="VARCHAR"/>
+		<result property="userType" column="userType"  jdbcType="DECIMAL"/>
+		<association property="organization" javaType="Organization"  column="org_id" jdbcType="DECIMAL" > 
+	        <id column="org_id" javaType="Long" property="id" />
+	        <result column="org_name" javaType="String" property="name" />
+	    </association>
+	</resultMap>
+
+
+	<resultMap id="simpleUserResult" type="User">
+		<result column="realname" property="realname" />
+		<result column="username" property="username" />
+	</resultMap>
+
+
+   	<resultMap id="orgResult" type="Organization">
+	    <id column="id" jdbcType="DECIMAL" property="id" />
+	    <result property="name" jdbcType="VARCHAR" column="name"/>
+	</resultMap>
+	
+	<select id="findorg" parameterType="Long" resultMap="orgResult">
+        select id,name from security_organization where id = #{0}
+    </select>
+
+
+	<insert id="save" useGeneratedKeys="false" keyProperty="id" parameterType="User">
+		<selectKey resultType="LONG" order="BEFORE" keyProperty="id">
+	      SELECT SEQ_SECURITY_USER.NEXTVAL as id from DUAL
+	    </selectKey>
+		insert into security_user(id,realname,username,password,salt,phone,email,org_id,status,userType,create_time)
+		values(#{id},#{realname},#{username},#{password},#{salt},#{phone},#{email},#{organization.id ,jdbcType=DECIMAL},#{status},#{userType},sysdate)
+	</insert>
+
+
+	
+
+
+	<select id="findByUsername" parameterType="map" resultMap="userResult">
+		<include refid="selectUser" />
+		<where>
+			<if test="userName!=null">
+				a.userName = #{userName}
+			</if>
+			<if test="notId!=null">
+				and a.id != #{notId}
+			</if>
+		</where>
+	</select>
+
+	<select id="findByRealname" parameterType="String" resultMap="userResult">
+		<include refid="selectUser" />
+		<where>
+			<if test="realname!=null">
+				a.realname = #{realname}
+			</if>
+			<if test="notId!=null">
+				and a.id != #{notId}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAllPage" resultMap="userResult">
+		<include refid="selectUser" />
+	</select>
+
+	<select id="get" parameterType="java.lang.Long" resultMap="userResult">
+		<include refid="selectUser" />
+		where a.id = #{id}
+	</select>
+
+	<select id="getByIds" parameterType="java.lang.Long" resultMap="userResult">
+		<include refid="selectUser" />
+		where a.id in 
+	    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")"> 
+	       #{item}
+	    </foreach>
+	</select>
+
+	
+	<!--删除操作-->
+	<delete id="delete" parameterType="java.lang.reflect.Array">
+	    delete from security_user where ID in 
+	    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")"> 
+	       #{item}
+	    </foreach>
+	</delete>
+
+   
+	<delete id="deleteUserRoles" parameterType="java.lang.reflect.Array">
+		delete from security_user_role where user_id in 
+	    <foreach item="item" index="index" collection="userids" open="(" separator="," close=")"> 
+	       #{item}
+	    </foreach>
+	</delete>
+
+	<update id="update" parameterType="User">
+		update security_user set
+		realname = #{realname},username =#{username},password = #{password},
+		salt = #{salt}, userType=#{userType},org_id=#{organization.id,jdbcType=DECIMAL}, phone = #{phone},email = #{email},
+		 status = #{status}
+		
+		where id = #{id}
+	</update>
+
+
+
+
+	<select id="findByConditionPage" parameterType="map" resultMap="userResult">
+		<include refid="selectUser" />
+		<where>
+			<if test="condition.username!=null and condition.username!=''  ">
+				 <![CDATA[ and a.username like '%'||#{condition.username}||'%' ]]>
+			</if>
+			<if test="condition.realname!=null and condition.realname!=''  ">
+				<![CDATA[ and a.realname like '%'||#{condition.realname}||'%']]>
+			</if>
+			<if test="condition.organization!=null and  condition.organization.name!='' and condition.organization.name!=null ">
+				<![CDATA[ and org.name like '%'||#{condition.organization.name}||'%' ]]>
+			</if>
+		</where>
+	</select>
+
+
+	<select id="findAllUser" resultMap="simpleUserResult">
+		select realname,username from
+		security_user where userType = 2 or userType = 3
+	</select>
+
+	<sql id="selectUser">
+		select a.id,a.realname,a.username,a.password,a.salt,a.phone,a.email,a.create_time,a.status,a.userType,
+				org.id org_id,org.name org_name  
+		from security_user a
+		left join SECURITY_ORGANIZATION org on a.org_id=org.id 
+	</sql>
+
+</mapper>

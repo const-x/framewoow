@@ -1,0 +1,60 @@
+<%@page import="java.util.Date"%>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+
+<div class="easyui-layout" data-options="fit:true" >
+
+	<div class="searchPanel" data-options="region:'north',split:true,minHeight:49" >
+		<form class="searchform" id="@{componentlower}SearchFm" refDataGrid="@{componentlower}Grid" onsubmit="return submitQuery(this)">
+		    <table>
+		      <tr>
+		        <td>
+		        	<ul>
+@{conditions}
+		        	</ul>		
+		        </td>
+		        <td class="searchSubmit">
+			        <ul><li>
+			              <input type='submit' value='查询' iconCls="icon-search" class='easyui-linkbutton'  >
+			        </li></ul>
+		        </td>
+		      </tr>
+		    </table>
+	    </form>
+	</div>
+	
+	<div data-options="region:'center',border:false">
+		<table class="easyui-datagrid" fit='true' id="@{componentlower}Grid" refForm="@{componentlower}SearchFm"
+				data-options="striped:true,idField:'@{idfield}',sortcolumns:{@{sortcolumns}},url:'<%=basePath %>/@{componentlower}/list',method:'POST',toolbar:'#@{componentlower}toolbar'">
+			<thead>
+				<tr>
+@{heads}
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+		
+		<div id="@{componentlower}toolbar" style="padding:5px;height:auto">
+		    <shiro:hasPermission name="@{componentlower}:save">
+				<a id="@{componentlower}Add" iconCls="easy-icon-add"  class="easyui-linkbutton"   onClick="toolbarButtonClick(this)" href="javascript:void(0)" 
+				   refDataGrid="@{componentlower}Grid" url="<%=basePath%>/@{componentlower}/create" type="dialog" plain="true" >添加</a>
+			</shiro:hasPermission>
+			<shiro:hasPermission name="@{componentlower}:delete">
+				<a id="@{componentlower}Del" iconCls="easy-icon-remove" class="easyui-linkbutton" onClick="toolbarButtonClick(this)" href="javascript:void(0)"
+				   refDataGrid="@{componentlower}Grid" 	confirm="确定要删除选中的@{entityAlias}?" url="<%=basePath%>/@{componentlower}/delete/{id}" type="ajaxTodo" model='all' plain="true" >删除</a>
+			</shiro:hasPermission>
+@{actions}			 
+		</div>
+	
+	</div>
+
+</div>
+<script type="text/javascript">
+
+	function @{componentlower}RowOperatFomatter(value,row,index){
+@{rowactions}	
+	}
+
+@{scripts}
+</script>

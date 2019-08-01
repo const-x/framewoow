@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.constx.demo.security.dao.PermissionDao">
+	
+	 
+	<resultMap id="permissionResult" type="Permission">
+	<!-- 主键 -->
+        <id  property="id" javaType="Long" jdbcType="DECIMAL"  column="ID" />
+	    <result property="roleId"  column="role_id" jdbcType="DECIMAL"/>
+		<result property="permission" javaType="String" column="permission" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	
+	<select id="findPermissionListByRole" parameterType="PermissionSearchCriteria" 
+		resultType="String">
+		select permission from security_role_permission 
+		<where>
+			<if test="roleId!=null">
+				role_id = #{roleId}
+			</if>
+		</where>
+	</select>
+	
+    <insert id="save" parameterType="java.util.List">
+		insert into security_role_permission
+		 select  SEQ_SECURITY_ROLE_PERMISSION.nextval,A.* from(
+		<foreach collection="list" item="item" index="index" separator="UNION" > 
+      		select  #{item.roleId}, #{item.permission} from dual 
+    	</foreach>
+		)A 
+	</insert>
+	
+	
+	<delete id="deleteByRoleId" parameterType="Long">
+		delete from security_role_permission
+		<where>
+			<if test="_parameter!=null">
+				role_id = #{_parameter}
+			</if>
+		</where>
+	</delete>
+	
+</mapper>

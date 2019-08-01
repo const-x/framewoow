@@ -1,0 +1,34 @@
+    // -导出Excel-------------------------------------------------
+    private static final String EXPORT = "/@{modulelower}/@{componentlower}/export";
+
+	@RequiresPermissions("@{componentlower}:export")
+	@RequestMapping(value = "/exportfield")
+	public String preExportExcel(@{entryFristUpper}Condition condition,Map<String, Object> map,HttpServletRequest request) {
+		try {
+			@{exportText}
+		    map.put("selectFields", selectFields);
+			map.put("condition", condition);
+			return EXPORT;
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+	}
+
+	@RequiresPermissions("@{componentlower}:export")
+	@RequestMapping(value = "/export", method = RequestMethod.POST)
+	public @ResponseBody void exportExcel(@{entryFristUpper}Condition condition,Page page,String selectedFields,HttpServletResponse response) {
+		try{
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+			String now = sdf.format(new Date());
+			response.setCharacterEncoding("utf-8");
+			response.setContentType("application/x-msdownload");
+			response.setHeader("content-disposition", "attachment;filename="+ new String(("@{componentAlias}导出 "+now).getBytes("gbk"), "iso8859-1") + ".xls");
+			if (condition == null) {
+				condition = new @{entryFristUpper}Condition();
+			}
+			@{componentFristLower}Service.exportExcel(condition,page,selectedFields,response.getOutputStream());
+		}catch(Exception e){
+			logger.error(e.getLocalizedMessage(),e);
+		}
+	}

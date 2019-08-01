@@ -1,0 +1,14 @@
+
+    @RequiresPermissions("@{componentlower}:view")
+	@RequestMapping(value = "/@{field}/{id}", method = RequestMethod.GET)
+	public String view@{fieldFirstUpper}(@PathVariable Long id, Map<String, Object> map) {
+		try {
+			@{entryFristUpper} @{entryFristlower} = @{componentFristLower}Service.getForUpdate(id);
+			@{entryFristUpper}View view = new @{entryFristUpper}View(@{entryFristlower});
+			this.convertFileToUrl(view);
+			String[] urls = (String[])view.get("@{field}Urls");
+			return super.viewPictures(urls, map);
+		} catch (Exception e) {
+			return super.alert("系统错误", e, map);
+		}
+	}

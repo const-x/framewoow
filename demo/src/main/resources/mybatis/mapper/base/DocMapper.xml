@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="idv.constx.demo.common.dao.DocDao" >
+<!-- 返回内容定义 -->
+<resultMap id="docResult" type="Doc" > 
+    <!-- 主键 -->
+    <id  property="id" javaType="Long" jdbcType="DECIMAL"  column="ID" />
+    <!-- 文件名称 -->
+    <result property="name" javaType="String" jdbcType="VARCHAR" column="NAME" />
+    <!-- 文件类型 -->
+    <result property="suffix" javaType="String" jdbcType="VARCHAR" column="SUFFIX" />
+    <!-- 存储路径（相对） -->
+    <result property="path" javaType="String" jdbcType="VARCHAR" column="PATH" />
+    <!-- MD5码 -->
+    <result property="mD5" javaType="String" jdbcType="VARCHAR" column="MD5" />
+    <!-- (缓存文件)过期时间 -->
+    <result property="expiration" javaType="String" jdbcType="CHAR" column="EXPIRATION" />
+    <!-- (缓存文件)key值 -->
+    <result property="cacheKey" javaType="String" jdbcType="VARCHAR" column="CACHE_KEY" />
+    <!-- 创建人 -->
+    <result property="creater" javaType="Long" jdbcType="DECIMAL" column="CREATER" />
+    <!-- 最后修改人 -->
+    <result property="modifyer" javaType="Long" jdbcType="DECIMAL" column="MODIFYER" />
+    <!-- 创建时间 -->
+    <result property="createtime" javaType="String" jdbcType="CHAR" column="CREATETIME" />
+    <!-- 最后修改时间 -->
+    <result property="modifytime" javaType="String" jdbcType="CHAR" column="MODIFYTIME" />
+</resultMap>
+
+
+<!-- select内容 -->
+<sql id="select">
+   select a.ID ,a.NAME ,a.SUFFIX ,a.PATH ,a.MD5 ,a.EXPIRATION ,a.CACHE_KEY ,a.CREATER ,
+          a.MODIFYER ,a.CREATETIME ,a.MODIFYTIME 
+   from BASE_DOC a 
+</sql>
+
+<!--版本验证-->
+<select id="findLastModifyTime" parameterType="java.lang.reflect.Array" resultMap="docResult" > 
+   select ID,MODIFYTIME from BASE_DOC where ID in
+   <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+       #{item}
+	</foreach>
+</select>
+
+<!--查询操作-->
+<select id="findByCacheKey" parameterType="String" resultMap="docResult" > 
+    <include refid="select"/>
+    where a.CACHE_KEY =  #{key}
+</select>
+
+<select id="findByFileMD5" parameterType="String" resultMap="docResult" > 
+     <include refid="select"/>
+    where a.MD5 =  #{md5}
+</select>
+
+<select id="findByRelKey" parameterType="String" resultMap="docResult" > 
+     <include refid="select"/>
+     where  exists( select 1 from BASE_DOC_REL r where r.CACHE_KEY = a.CACHE_KEY and r.id=  #{rel}) 
+</select>
+
+<select id="findByNotRelAndOutTime" parameterType="String" resultMap="docResult" > 
+    <include refid="select"/>
+    where 
+    not exists(select 1 from BASE_DOC_REL r where r.CACHE_KEY = a.CACHE_KEY) 
+        and sysdate >= to_date(a.FILE_CACHE_TIME,'yyyy-mm-dd HH24:mi:ss')
+</select>
+		
+<!--保存操作-->
+<insert id="save" parameterType="Doc"  useGeneratedKeys="false"  > 
+    <selectKey resultType="LONG" order="BEFORE" keyProperty="id">
+      SELECT SEQ_BASE_DOC.NEXTVAL as id from DUAL
+    </selectKey>
+    insert into BASE_DOC
+          (ID ,NAME ,SUFFIX ,PATH ,MD5 ,EXPIRATION ,CACHE_KEY ,CREATER ,
+          MODIFYER ,CREATETIME ,MODIFYTIME ) 
+    values
+          (#{id,jdbcType=DECIMAL},#{name,jdbcType=VARCHAR},#{suffix,jdbcType=VARCHAR},#{path,jdbcType=VARCHAR},#{mD5,jdbcType=VARCHAR},
+          #{expiration,jdbcType=CHAR},#{cacheKey,jdbcType=VARCHAR},#{creater,jdbcType=DECIMAL},#{modifyer,jdbcType=DECIMAL},#{createtime,jdbcType=CHAR},
+          #{modifytime,jdbcType=CHAR})
+</insert>
+
+<!--删除操作-->
+<delete id="deleteByCacheKey" parameterType="java.lang.reflect.Array">
+    delete from BASE_DOC where CACHE_KEY in 
+    <foreach item="item" index="index" collection="keys" open="(" separator="," close=")"> 
+       #{item}
+    </foreach>
+</delete>
+
+</mapper>

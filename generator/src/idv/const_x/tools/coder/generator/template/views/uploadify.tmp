@@ -1,0 +1,27 @@
+		$('#@{entity}_@{field}_upload').fileupload({
+			url : '<%=basePath%>/common/doc/uploadimg?@{size}',
+			autoUpload:true,	
+			dataType:'json',
+			acceptFileTypes:/(\.|\/)(gif|jpe?g|png)$/i,
+			maxFileSize:@{maxsize},
+			done: function (e, data) {
+				var obj=data.result;
+				if(obj.err==""){
+					$("#@{entity}_@{field}_view").attr("src",obj.url);
+		 			$("#@{entity}_@{field}").attr("value",obj.key);
+				}else{
+					$.messager.alert("错误", obj.err, 'error');
+				}
+			},
+			progressall: function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				if(progress == 100){
+					$('#@{entity}_@{field}_progress').hide();
+				}else{
+				   	$('#@{entity}_@{field}_progress').show();
+				    $('#@{entity}_@{field}_progress div').css('width',progress + '%'); 
+				}
+			}
+		});  
+    
+

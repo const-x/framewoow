@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+	default-autowire="byName">
+
+	<context:property-placeholder
+		location="classpath:/conf/*.properties"
+		ignore-resource-not-found="true" ignore-unresolvable="true"
+		file-encoding="UTF-8" />
+
+	<!-- 注解支持 -->
+	<context:component-scan base-package="idv.constx.demo">
+		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
+	</context:component-scan>
+
+	<!-- 数据库连接池 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close" primary="true">
+		<property name="driverClass" value="${jdbc.driver:com.mysql.jdbc.Driver}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.pwd}" />
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize:4}" />
+		<property name="acquireIncrement" value="${jdbc.acquireIncrement:2}" />
+		<property name="initialPoolSize" value="${jdbc.minPoolSize:2}" />
+		<property name="minPoolSize" value="${jdbc.minPoolSize:2}" />
+		<property name="maxIdleTime" value="${jdbc.maxIdleTime:120}" />
+		<property name="autoCommitOnClose" value="${jdbc.autoCommit:false}" />
+		<property name="checkoutTimeout" value="${c3p0.checkoutTimeout:3000}" />
+		<property name="maxIdleTimeExcessConnections" value="${c3p0.maxIdleTimeExcessConnections:60}" />
+		<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod:28000}" />
+	</bean>
+
+	<!-- 配置mybatis -->
+	<bean id="ysSqlSessionFactory" class="idv.constx.demo.common.SqlSessionFactoryBeanExt">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliases">
+		   <array>
+		      <value>idv.constx.demo.*.entity.*</value>
+		   </array>
+		</property>
+		<property name="mapperLocations" value="classpath:/mybatis/mapper/**/*.xml" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis.xml" />
+	</bean>
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="ysSqlSessionFactory"></constructor-arg>
+	</bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" >
+	    <property name="sqlSessionFactoryBeanName" value="ysSqlSessionFactory" />
+	    <property name="basePackage" value="idv.constx.demo.*.dao" />
+    </bean> 
+
+	<!--事务管理DataSourceTransactionManager -->
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!--启动spring注解功能 -->
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+	<!-- redis缓存配置 -->
+	<bean id="cache"  class="idv.constx.demo.common.redis.RedisCacheWapper">
+ 		<property name="pool">
+ 			<bean class="redis.clients.jedis.JedisPool" destroy-method="destroy">
+ 		        <constructor-arg name="poolConfig">
+ 		            <bean class="redis.clients.jedis.JedisPoolConfig">
+ 		                <property name="maxTotal" value="${redis.pool.maxTotal:4}"/>
+ 		                <property name="maxIdle" value="${redis.pool.maxIdle:2}"/>
+ 		                <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis:1000}"/>
+ 		                <property name="testOnBorrow" value="${redis.pool.testOnBorrow:true}"/>
+ 		            </bean>
+ 		        </constructor-arg>
+ 		        <constructor-arg name="host" value="${redis.host}"/>
+ 		        <constructor-arg name="port" value="${redis.port:6380}"/>
+ 		        <constructor-arg name="timeout" value="${redis.timeout:2000}"/>
+ 		        <constructor-arg name="password"><null/></constructor-arg>
+ 		        <constructor-arg name="database" value="${redis.database:0}"/>
+ 		        <constructor-arg name="clientName" value="app-${client.appId}"/>
+ 		    </bean>
+ 		</property>
+ 	</bean>
+
+	<!--  
+	<import resource="spring-dubbo.xml" />
+	<import resource="spring-scheduler.xml" />
+	-->
+</beans>

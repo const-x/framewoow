@@ -1,0 +1,4 @@
+			 <shiro:hasPermission name="@{componentlower}:export">
+				<a id="@{componentlower}Export" iconCls="easy-icon-export" refForm="@{componentlower}SearchFm"  class="easyui-linkbutton"  width='810' onClick="toolbarButtonClick(this)" href="javascript:void(0)" 
+				   refDataGrid="@{componentlower}Grid" url="<%=basePath%>/@{componentlower}/exportfield" type="dialog" plain="true" >导出</a>
+			</shiro:hasPermission>

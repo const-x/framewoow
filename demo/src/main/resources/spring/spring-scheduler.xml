@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<!-- 执行实际的调度器-->  
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+	    <property name="triggers">  
+	        <list>  
+	            <ref bean="ftpScann"></ref>  
+	        </list>  
+	    </property>  
+	</bean> 	
+		
+		
+	<!--定时扫描VMI的FTP地址 -->	
+	<!--要定时执行的方法 -->
+	<bean id="ftpScannTaskJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<!--指定要定时执行的方法所在类，将定时任务定义成bean -->
+			<bean id="ftpScaleTask" class="com.bubugao.order.quartz.FtpScannQuartz" scope="singleton"></bean>
+		</property>
+		<property name="targetMethod">
+			<!--指定定时执行的方法 -->
+			<value>excute</value>
+		</property>
+		<property name="concurrent">
+			<!--指定目标封装为有状态的任务，有状态的任务不能并发执行，无状态的任务可并发执行 -->
+			<value>false</value>
+		</property>
+	</bean>
+	<!-- 定义触发时间 -->
+	<bean id="ftpScann" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="ftpScannTaskJob" />
+		</property>
+		<!-- cron表达式 -->
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value>
+		</property>
+	</bean>
+</beans>

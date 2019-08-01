@@ -1,0 +1,10 @@
+log4j.logger.@{package}.@{modulelower}=ERROR,console,@{modulelower}_log
+log4j.additivity.@{package}.@{modulelower}=false
+log4j.appender.@{modulelower}_log.File=${log4jRoot}/@{project}_@{modulelower}_log.log 
+log4j.appender.@{modulelower}_log.layout=org.apache.log4j.PatternLayout
+log4j.appender.@{modulelower}_log.layout.ConversionPattern=%d [%-5p] %m (%C:%F:%L) %n
+log4j.appender.@{modulelower}_log.Threshold=ERROR
+log4j.appender.@{modulelower}_log.encoding=UTF-8
+log4j.appender.@{modulelower}_log=org.apache.log4j.RollingFileAppender
+log4j.appender.@{modulelower}_log.MaxFileSize=10MB
+log4j.appender.@{modulelower}_log.MaxBackupIndex=10

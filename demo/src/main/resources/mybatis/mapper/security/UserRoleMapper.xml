@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.constx.demo.security.dao.UserRoleDao">
+
+	<resultMap id="userRoleResult" type="UserRole">
+	    <id column="id" jdbcType="DECIMAL" property="id" />
+		<result column="priority" javaType="INTEGER"/>
+		<association property="user" javaType="User" jdbcType="DECIMAL"
+				column="user_id" select="finduser" />
+		<association property="role" javaType="Role" jdbcType="DECIMAL"
+				column="role_id" select="findrole"/>
+	</resultMap>
+	
+	<select id="finduser" parameterType="Long" resultMap="userResult">
+       select id,realname from security_user where id = #{0}
+    </select>
+	<resultMap id="userResult" type="User" >
+		<id column="id" jdbcType="DECIMAL" property="id" />
+		<result column="realname" javaType="String" property="realname"/>
+	</resultMap>
+	
+	<select id="findrole" parameterType="Long" resultMap="roleResult">
+        select id,name from security_role where id = #{0}
+    </select>
+	<resultMap id="roleResult" type="Role" >
+		<id column="id" jdbcType="DECIMAL" property="id" />
+		<result column="name" javaType="String" property="name"/>
+	</resultMap>
+	
+	<insert id="save" useGeneratedKeys="false" keyProperty="id" parameterType="UserRole">
+	<selectKey resultType="LONG" order="BEFORE" keyProperty="id">
+	      SELECT SEQ_SECURITY_USER_ROLE.NEXTVAL as id from DUAL
+	    </selectKey>
+		insert into security_user_role(id,priority,user_id,role_id)
+		values(#{id},#{priority},#{user.id},#{role.id})
+	</insert>
+	
+	<select id="findByUserId" parameterType="Long" 
+		resultMap="userRoleResult">
+		select id,user_id,role_id,priority from security_user_role 
+		where user_id = #{userId}
+	</select>
+	
+	<delete id="delete" parameterType="Long">
+		delete from security_user_role where id =#{userRoleId}
+	</delete>
+	
+	<delete id="deleteByRole" parameterType="UserRole">
+		delete from security_user_role where user_id = #{user.id} and role_id = #{role.id}
+	</delete>
+	
+	<select id="countByRoleId" parameterType="Long" 
+		resultType="Integer">
+		select count(1) from security_user_role 
+		where role_id = #{roleId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,3 @@
+		if(@{entryFristlower}.get@{fieldFirstUpper}() == null || @{entryFristlower}.get@{fieldFirstUpper}().toString().equals("")){
+		    ExceptionUtils.throwBizException("@{fieldAlias}不能为空");
+		}

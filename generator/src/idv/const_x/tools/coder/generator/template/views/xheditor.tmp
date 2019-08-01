@@ -1,0 +1,8 @@
+		$('#@{field}').xheditor({
+			tools:'Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,|,RemoveformatAlign,List,Outdent,Indent,Link,Unlink,Img,Table,|,Preview,Source,Fullscreen',
+			skin:'default',
+			upMultiple:true,
+			upImgUrl: '<%=basePath%>/common/doc/uploadimg?param=module:membermng',
+			upImgExt: "jpg,jpeg,gif,bmp,png",
+			html5Upload:false
+		});

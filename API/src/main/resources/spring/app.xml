@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+	<!---->	
+	<context:property-placeholder location="classpath:/app.properties" ignore-resource-not-found="true" ignore-unresolvable="true"
+		file-encoding="UTF-8" />
+	
+	
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" primary="true">
+		<property name="driverClass" value="${jdbc.driverClass:com.mysql.jdbc.Driver}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.pwd}"/>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize:10}" />
+		<property name="acquireIncrement" value="${jdbc.acquireIncrement:2}" />
+		<property name="initialPoolSize" value="${jdbc.minPoolSize:4}" />
+		<property name="minPoolSize" value="${jdbc.minPoolSize:4}" />
+		<property name="maxIdleTime" value="${jdbc.maxIdleTime:120}" />
+		<property name="autoCommitOnClose" value="${jdbc.autoCommit:false}" />
+		<property name="checkoutTimeout" value="${c3p0.checkoutTimeout:3000}" />
+		<property name="maxIdleTimeExcessConnections" value="${c3p0.maxIdleTimeExcessConnections:60}" />
+		<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod:28000}" />
+	</bean>
+	<bean class="org.springframework.jdbc.core.JdbcTemplate" primary="true">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" primary="true">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<context:component-scan base-package="idv.constx.api">
+		<context:exclude-filter type="regex" expression=".*TestCase"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/> 
+	</context:component-scan>
+    
+</beans>

@@ -1,0 +1,27 @@
+	/**
+	 * 根据id查询@{refalias}
+	 * 
+	 * @param id 实体ID
+	 *
+	 */
+	List<@{refClass}> find@{refname}ById(@Param(value = "@{entrylower}id") Long @{entrylower}id);
+
+	
+	/**
+	 * 保存@{refalias}
+	 * 
+	 * @param @{entryFristlower}s 实体内容
+	 *
+	 */
+	void save@{refname}(@Param(value = "@{entryFristlower}Id") Long @{entryFristlower}Id,@Param(value = "entitys") @{refClass} ... entitys);
+	
+	
+	
+	
+	/**
+	 * 根据id清除@{refalias}
+	 * 
+	 * @param id 实体ID
+	 *
+	 */
+	void delete@{refname}ById(@Param(value = "@{entrylower}ids") Long ...@{entrylower}ids);

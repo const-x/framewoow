@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:property-placeholder location="classpath:/app.properties" ignore-resource-not-found="true" ignore-unresolvable="true"
+		file-encoding="UTF-8" />
+
+    <!-- 定义JSP文件的位置 
+ 	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/" />
+		<property name="suffix" value=".jsp" />
+	</bean> 
+    -->
+    
+    <bean id="openApiSecurityInterceptor" class="idv.constx.api.base.mvc.interceptor.OpenApiSecurityInterceptor" >
+        <property name="timeDiff" value="${security.timediff:-1}" />
+        <property name="signverify" value="${security.signverify:-1}" />
+        <property name="publicKey" value="${security.signverify.key}" />
+    </bean>
+		
+    <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/api/**" />
+			<ref bean="openApiSecurityInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>		
+    
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="idv.constx.api.base.mvc.converter.OpenApiJsonConverter">
+				<property name="objectMapper"
+					value="#{T(com.bubugao.framework.util.UtilJson).JSON_MAPPER}" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	
+	
+	<context:component-scan base-package="idv.constx.api">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/> 
+	</context:component-scan>
+	
+	
+	
+</beans>

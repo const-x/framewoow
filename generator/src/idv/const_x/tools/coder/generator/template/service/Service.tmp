@@ -1,0 +1,22 @@
+package @{package}.@{modulelower}.service;
+
+import java.util.List;
+import @{package}.util.dwz.Page;
+
+import @{package}.base.service.BaseService;
+import @{package}.@{modulelower}.entity.@{entryFristUpper};
+@{imports}
+
+
+/**
+ * 
+ * @{componentAlias}后台服务
+ *
+ * @author @{author}
+ * @since  @{date}
+ */
+public interface @{componentFristUpper}Service  extends BaseService<@{entryFristUpper},@{entryFristUpper}Condition>{
+	
+@{expands}	
+
+}

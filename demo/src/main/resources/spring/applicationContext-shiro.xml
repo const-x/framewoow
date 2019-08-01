@@ -1,0 +1,65 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="true">
+
+	<description>Shiro安全配置</description>
+
+	<!-- 項目自定义的Realm -->
+	<bean id="shiroDbRealm" class="idv.constx.demo.security.shiro.ShiroDbRealm"
+		depends-on="userDao,userRoleDao,permissionDao"></bean>
+	
+	<!-- Shiro's main business-tier object for web-enabled applications -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroDbRealm" />
+		<!-- <property name="sessionManager" ref="sessionManager" />   -->
+	</bean>
+
+
+    <!-- 通过缓存共享session 可用于分布式部署
+	<bean id="sessionDAO" class="idv.constx.demo.security.shiro.ShiroSessionDao">
+	    <property name="cache" ref="cache"></property>
+	</bean>	
+		
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="sessionDAO"></property>
+	</bean>
+	 -->
+
+
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login" />
+		<property name="successUrl" value="/index" />
+		<property name="filters">
+			<map>
+				<entry key="authc" value-ref="baseFormAuthenticationFilter" />
+				<!-- 是否启用验证码检验 -->
+				<!-- <entry key="authc" value-ref="captchaFormAuthenticationFilter"/> -->
+			</map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/js/** = anon
+				/css/** = anon
+				/images/** = anon
+				/upload/** = anon
+				/Captcha.jpg = anon
+				/login/timeout = anon
+				/login = authc
+				/logout = logout
+				/common/** = anon
+				/** = user
+			</value>
+		</property>
+	</bean>
+
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<bean id="captchaFormAuthenticationFilter"
+		class="idv.constx.demo.security.shiro.CaptchaFormAuthenticationFilter" />
+	<bean id="baseFormAuthenticationFilter" class="idv.constx.demo.security.shiro.BaseFormAuthenticationFilter" />
+</beans>

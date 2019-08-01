@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.constx.demo.security.dao.PermissionDao">
+	
+	 
+	<resultMap id="permissionResult" type="Permission">
+	    <result property="roleId"  column="role_id"/>
+		<result property="permission" column="permission"/>
+	</resultMap>
+
+	
+	<select id="findPermissionListByRole" parameterType="PermissionSearchCriteria" 
+		resultType="String">
+		select permission from security_role_permission 
+		<where>
+			<if test="roleId!=null">
+				role_id = #{roleId}
+			</if>
+		</where>
+	</select>
+	
+    <insert id="save" parameterType="java.util.List">
+		insert into security_role_permission
+		( role_id,permission)
+		values
+		<foreach collection="list" item="item" index="index"  separator=",">  
+           (#{item.roleId},#{item.permission})  
+         </foreach>
+         <selectKey keyProperty="ID" resultType="int" order="AFTER">
+			select LAST_INSERT_ID() 
+		 </selectKey>   
+	</insert>
+	
+	
+	<delete id="deleteByRoleId" parameterType="Long">
+		delete from security_role_permission
+		<where>
+			<if test="_parameter!=null">
+				role_id = #{_parameter}
+			</if>
+		</where>
+	</delete>
+	
+</mapper>

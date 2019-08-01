@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="idv.constx.demo.security.dao.ModuleDao" >
+<!-- 返回内容定义 -->
+<resultMap id="moduleResult" type="Module" > 
+    <!-- 主键 -->
+    <id  property="id" javaType="Long"  column="ID" />
+    <!-- 模块名称 -->
+    <result property="name" javaType="String" column="NAME" />
+    <!-- 入口地址 -->
+    <result property="url" javaType="String" column="URL" />
+    <!-- 标志符，用于授权名称（类似module:save） -->
+    <result property="sn" javaType="String" column="SN" />
+    <!-- 模块描述 -->
+    <result property="description" javaType="String" column="DESCRIPTION" />
+    <!-- 模块的排序号 -->
+    <result property="priority" javaType="Integer" column="PRIORITY" />
+    <!-- 是否启用 -->
+    <result property="enable" javaType="Integer" column="ENABLE" />
+    <!-- 模块类型 -->
+    <result property="type" javaType="Integer" column="TYPE" />
+    <!-- 创建时间 -->
+    <result property="createtime" javaType="String" column="CREATETIME" />
+    <!-- 最后修改时间 -->
+    <result property="modifytime" javaType="String" column="MODIFYTIME" />
+      <!-- 创建人 -->
+    <result property="creater" javaType="Long" column="CREATER" />
+    <!-- 最后修改人 -->
+    <result property="modifyer" javaType="Long" column="MODIFYER" />
+    <!-- 上级业务模块 -->
+    <association property="parent" javaType="Module" jdbcType="DECIMAL" column="PARENT_ID"  > 
+        <id column="parent_id" jdbcType="DECIMAL" property="id" />
+        <result column="parent_name" jdbcType="VARCHAR" property="name" />
+    </association>
+</resultMap>
+
+<!-- 上级实体 -->
+<resultMap id="parentResult" type="module"> 
+  <id column="id" jdbcType="DECIMAL" property="id" />
+  <result column="modifyTime" jdbcType="VARCHAR" property="modifytime" />
+</resultMap>
+
+
+<!-- select内容 -->
+<sql id="select">
+   select a.ID ,a.NAME ,a.URL ,a.SN ,a.DESCRIPTION ,a.PRIORITY ,a.ENABLE ,a.TYPE ,
+          a.CREATER,a.CREATETIME ,a.MODIFYER,a.MODIFYTIME ,
+          parent.ID as parent_id,parent.NAME as parent_name
+   from SECURITY_MODULE a 
+   left join SECURITY_MODULE parent on parent.ID = a.PARENT_ID
+</sql>
+
+<!--版本验证-->
+<select id="findLastModifyTime" parameterType="java.lang.reflect.Array" resultMap="moduleResult" > 
+   select ID,MODIFYTIME from SECURITY_MODULE where ID in
+   <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+       #{item}
+	</foreach>
+</select>
+
+<!--查询上级-->
+<select id="findParentById" parameterType="Long" resultMap="parentResult" > 
+   select ID,name from SECURITY_MODULE   <where>
+      ID = #{0} 
+   </where>
+</select>
+
+<!--查询操作-->
+<select id="findById" parameterType="Long" resultMap="moduleResult" > 
+    <include refid="select"/>
+    where a.ID =  #{id}
+</select>
+
+<select id="findByIds" parameterType="java.lang.reflect.Array" resultMap="moduleResult" > 
+    <include refid="select"/>
+    where a.ID in 
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")"> 
+       #{item}
+    </foreach>
+</select>
+
+<select id="findByPage" parameterType="map" resultMap="moduleResult" > 
+   <include refid="select"/>
+   <where>
+   <if test="userId!=null  and userId!='' ">
+      and a.creater = #{userId} 
+    </if>
+   <if test="condition.name!=null  and condition.name!='' ">
+      <![CDATA[ and a.NAME like '%'||#{condition.name}||'%' ]]>
+    </if>
+   <if test="condition.parent!=null  and condition.parent.id!=null ">
+      <![CDATA[ and a.PARENT_ID = #{condition.parent.id} ]]>
+    </if>
+   </where>
+   <if test="order!=null  and order!='' ">
+      ORDER BY  ${order}  
+    </if>
+</select>
+
+<select id="findFieldsByPage" parameterType="map" resultMap="moduleResult" > 
+   <choose>
+     <when test="fields!=null  ">
+       select
+       <foreach collection="fields" item="item" index="index" separator="," >
+         a.${item}
+       </foreach>
+       from SECURITY_MODULE
+     </when><otherwise>
+       <include refid="select"/>
+     </otherwise>
+   </choose>
+   <where>
+   <if test="userId!=null  and userId!='' ">
+      and a.creater = #{userId} 
+    </if>
+   <if test="condition.name!=null  and condition.name!='' ">
+      <![CDATA[ and a.NAME like '%'||#{condition.name}||'%' ]]>
+    </if>
+   <if test="condition.parent!=null  and condition.parent!='' ">
+      <![CDATA[ and a.PARENT_ID = #{condition.parent.id} ]]>
+    </if>
+   </where>
+   <if test="order!=null  and order!='' ">
+      ORDER BY  ${order}  
+    </if>
+</select>
+
+<select id="findFieldsByWherePage" parameterType="map" resultMap="moduleResult" > 
+   <choose>
+     <when test="fields!=null  ">
+       select
+       <foreach collection="fields" item="item" index="index" separator="," >
+         ${item}
+       </foreach>
+       from SECURITY_MODULE a 
+     </when><otherwise>
+       <include refid="select"/>
+     </otherwise>
+   </choose>
+   <where>
+     <if test="where!=null  and where!='' ">
+      ${where}  
+     </if>
+   </where>
+   <if test="order!=null  and order!='' ">
+      ORDER BY  ${order}  
+    </if>
+</select>
+
+<select id="findByParentId" parameterType="java.lang.reflect.Array" resultMap="moduleResult" > 
+   <include refid="select"/>
+   <where>
+   	PARENT_ID IN
+   	<foreach item="item" index="index" collection="parentId" open="(" separator="," close=")"> 
+   		#{item}
+   	</foreach>
+   </where>
+</select>
+
+
+
+<!--保存操作-->
+<insert id="save" parameterType="Module"  useGeneratedKeys="true" keyProperty="id"  > 
+    insert into SECURITY_MODULE
+          (NAME ,URL ,SN ,DESCRIPTION ,PRIORITY ,ENABLE ,TYPE ,PARENT_ID ,
+          CREATER ,CREATETIME ,MODIFYER ,MODIFYTIME ) 
+    values
+          (#{name} ,#{url} ,#{sn} ,#{description} ,#{priority} ,#{enable} ,#{type} ,#{parent.id} ,
+          #{creater} ,#{createtime} ,#{modifyer} ,#{modifytime} )
+</insert>
+
+<!--删除操作-->
+<delete id="delete" parameterType="java.lang.reflect.Array">
+    delete from SECURITY_MODULE where ID in 
+    <foreach item="item" index="index" collection="ids" open="(" separator="," close=")"> 
+       #{item}
+    </foreach>
+</delete>
+
+<delete id="deleteByWhere" parameterType="String">
+    delete from SECURITY_MODULE where  ${where} 
+</delete>
+
+<!--更新操作-->
+<update id="update" parameterType="Module" >
+    update SECURITY_MODULE
+  <set>
+    NAME = #{name},URL = #{url},SN = #{sn},DESCRIPTION = #{description},PRIORITY = #{priority},ENABLE = #{enable},
+    TYPE = #{type},PARENT_ID = #{parent.id},MODIFYER = #{modifyer},MODIFYTIME = #{modifytime}
+  </set>
+    where ID = #{id}
+</update>
+
+</mapper>

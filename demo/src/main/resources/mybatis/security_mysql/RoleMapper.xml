@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="idv.constx.demo.security.dao.RoleDao">
+
+	<resultMap id="roleResult" type="Role">
+	    <id property="id" jdbcType="INTEGER" column="id"/>
+		<result property="name" jdbcType="VARCHAR"  column="name"/>
+	</resultMap>
+	
+	<insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="Role">
+		insert into security_role(name) values(#{name})
+	</insert>
+	
+	<select id="get" parameterType="Long" resultMap="roleResult">
+		select id,name from security_role 
+		<where>
+			<if test="_parameter!=null">
+				id = #{_parameter}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAllPage" resultMap="roleResult">
+		select id,name from security_role
+	</select>
+	
+	<select id="findByKeywordPage" parameterType="map" resultMap="roleResult">
+		select id ,name from security_role
+		<where>
+			<if test="keywords!=null">
+				name like "%"#{keywords}"%"
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByName" parameterType="map" resultMap="roleResult">
+		select id ,name from security_role
+		<where>
+			<if test="name!=null">
+				name = #{name}
+			</if>
+		</where>
+	</select>
+	
+	<update id="update" parameterType="Role">
+		update security_role set name = #{name} 
+		<where>
+			<if test="id!=null">
+				id = #{id}
+			</if>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="Long">
+		delete from security_role 
+		<where>
+			<if test="_parameter!=null">
+				id = #{_parameter}
+			</if>
+		</where>
+	</delete>
+</mapper>

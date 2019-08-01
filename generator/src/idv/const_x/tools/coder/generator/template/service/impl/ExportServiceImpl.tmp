@@ -1,0 +1,21 @@
+	@Override
+	@Transactional(readOnly = true)
+	public void exportExcel(@{entryFristUpper}Condition condition, Page page,String selectedFields, OutputStream out) {
+		try {
+			List<ExcelColumnMeta> columns = new ArrayList<ExcelColumnMeta>();
+			ExcelColumnMeta column = null;
+			String[] exportColumns = StringUtils.split(selectedFields, ",");
+			for (String str : exportColumns) {
+				switch (str) {
+@{exportculmns}			
+			    }
+			}    
+			List<@{entryFristUpper}> list = this.getByCondition(condition,null);
+			ExcelCreater<@{entryFristUpper}> creater = new ExcelCreater<@{entryFristUpper}>();
+			HSSFWorkbook workbook = creater.create(columns, list, @{entryFristUpper}.class);
+			workbook.write(out);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+		    super.exportError(e, out);
+		}
+	}

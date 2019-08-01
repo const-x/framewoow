@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	
+	<!-- 插件配置 -->
+	<plugins>
+		<!-- 通过反射机制，将分页查询的totalcount设置到page对象中 -->
+		<plugin interceptor="idv.constx.demo.util.dwz.PagePlugin">
+			<property name="dialect" value="oracle" />
+			<!-- 拦截所有带有Page的操作 -->
+			<property name="pageSqlId" value=".*Page.*" />
+		</plugin>
+	</plugins>
+
+	
+
+</configuration>

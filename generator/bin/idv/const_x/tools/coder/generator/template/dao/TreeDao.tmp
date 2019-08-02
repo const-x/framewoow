@@ -1,0 +1,136 @@
+package @{package}.@{modulelower}.dao;
+
+import java.util.List;
+
+import @{package}.base.dao.BaseDao;
+import org.apache.ibatis.annotations.Param;
+import @{package}.@{modulelower}.entity.@{entryFristUpper};
+import @{package}.@{modulelower}.service.@{entryFristUpper}Condition;
+@{refImport}
+@{auditImport}
+import @{package}.util.dwz.Page;
+
+/**
+ * @{entityAlias}数据库操作
+ * @author @{author}
+ * @since  @{date}
+ */
+
+public interface @{entryFristUpper}Dao  extends BaseDao {
+	
+	
+	
+	/**
+	 * 根据id查询
+	 * 
+	 * @param id 实体ID
+	 * @return List<@{entryFristUpper}>
+	 *
+	 */
+	@{entryFristUpper} findById(@Param(value = "id") Long id);
+	
+	/**
+	 * 根据id查询
+	 * 
+	 * @param ids 实体ID
+	 * @return List<@{entryFristUpper}>
+	 *
+	 */
+	List<@{entryFristUpper}> findByIds(@Param(value = "ids") Long ...ids);
+	
+	
+	/**
+	 * 根据指定条件查找
+	 * 
+	 * @param condition 查询条件 可为空 
+	 * @param order     排序条件（不包含order by关键字） 可为空
+     * @param page      分页信息  可为空
+	 * @return List<@{entryFristUpper}>
+	 *
+	 */
+	List<@{entryFristUpper}> findByPage(@Param(value = "userId") Long userId, @Param(value = "condition") @{entryFristUpper}Condition condition,
+	                                               @Param(value = "order") String order, @Param(value = "page") Page page);
+	
+	/**
+	 * 根据指定条件查找指定字段值
+	 * 
+	 * @param fields    查询字段 为空时查所有
+	 * @param condition 查询条件 可为空 
+	 * @param order     排序条件（不包含order by关键字） 可为空
+     * @param page      分页信息  可为空
+	 * @return List<@{entryFristUpper}>
+	 *
+	 */
+	List<@{entryFristUpper}> findFieldsByPage(@Param(value = "userId") Long userId,@Param(value = "fields") String[] fields, @Param(value = "condition") @{entryFristUpper}Condition condition,
+	                                               @Param(value = "order") String order, @Param(value = "page") Page page);
+	                                               
+    /**
+	 * 根据指定条件查找指定字段值
+	 * 
+	 * @param fields    查询字段 为空时查所有
+	 * @param where 查询条件 可为空 
+	 * @param order     排序条件（不包含order by关键字） 可为空
+     * @param page      分页信息  可为空
+	 * @return List<@{entryFristUpper}>
+	 *
+	 */
+	List<@{entryFristUpper}> findFieldsByWherePage(@Param(value = "userId") Long userId,@Param(value = "fields") String[] fields, @Param(value = "where")  String where,
+	                                               @Param(value = "order") String order,@Param(value = "page") Page page);
+	                                               
+            
+	/**
+	 * 保存@{entityAlias}
+	 * 
+	 * @param @{entryFristlower}s 实体内容
+	 *
+	 */
+	void save(@{entryFristUpper} @{entryFristlower});
+    
+        
+	/**
+	 * 删除@{entityAlias}
+	 * 
+	 * @param ids 实体ID
+	 *
+	 */
+	void delete(@Param(value = "ids") Long ...ids);
+	
+	/**
+	 * 逻辑删除@{entityAlias}
+	 * 
+	 * @param ids 实体ID
+	 *
+	 */
+	void deleteInLogic(@Param(value = "modifyer") Long modifyer,@Param(value = "modifytime") String modifytime,@Param(value = "ids") Long ...ids);
+	
+	/**
+	 * 删除@{entityAlias}
+	 * 
+	 * @param where 查询条件（不包含where关键字）
+	 *
+	 */
+	void deleteByWhere(@Param(value = "where")  String where);
+	
+	/**
+	 * 逻辑删除@{entityAlias}
+	 * 
+	 * @param where 查询条件（不包含where关键字）
+	 *
+	 */
+	void deleteByWhereInLogic(@Param(value = "modifyer") Long modifyer,@Param(value = "modifytime") String modifytime, @Param(value = "where")  String where);
+    
+     /**
+     * 更新@{entityAlias}
+     * 
+     * @param @{entryFristlower}s 实体内容
+     *
+	 */
+	void update(@{entryFristUpper} @{entryFristlower});
+	
+	List<@{entryFristUpper}> findByParentId(Page page, Long... parentId);
+
+@{refs}
+
+@{audit}	
+
+}

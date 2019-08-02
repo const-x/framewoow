@@ -1,0 +1,59 @@
+	@Override
+	@Transactional(readOnly = true)
+	public @{entryFristUpper} getForSubmit(int action, Long id) {
+		try{
+			@{entryFristUpper} @{entryFristlower} = this.getForUpdate(id);
+			super.proSubmit(action, @{entryFristlower});
+			return @{entryFristlower};
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+		return null;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public @{entryFristUpper} getForAudit(int action, Long id) {
+		try{
+			@{entryFristUpper} @{entryFristlower} = this.getForUpdate(id);
+			super.proAudit(action, @{entryFristlower});
+			return @{entryFristlower};
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+		return null;
+	}
+	
+	@Override
+	@Transactional
+	public void audit(@{entryFristUpper} @{entryFristlower},int status,String note) {
+		try {
+			super.beforeUpdate(@{entryFristlower});
+			OperationHistoryEntity audit = new OperationHistoryEntity();
+			audit.setOperattime(@{entryFristlower}.getModifytime());
+			audit.setTarget(@{entryFristlower}.getId());
+			audit.setOperator(super.getCurrentUser());
+			audit.setStatus(status);
+			audit.setNote(note);
+			
+			this.@{entryFristlower}Dao.updateAudit(audit.getTarget(), audit.getStatus(), audit.getOperattime(), audit.getOperator().getId());
+			this.@{entryFristlower}Dao.saveAudit(audit);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<OperationHistoryEntity> getAudits(Long @{entryFristlower}Id,Page page) {
+		try {
+			return this.@{entryFristlower}Dao.findAuditByPage(@{entryFristlower}Id, page);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+		return null;
+	}

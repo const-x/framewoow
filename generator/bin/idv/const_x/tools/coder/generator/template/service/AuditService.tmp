@@ -1,0 +1,7 @@
+    @{entryFristUpper} getForSubmit(int action,Long id);
+	
+	@{entryFristUpper} getForAudit(int action,Long id);
+
+    void audit(@{entryFristUpper} @{entryFristlower},int status,String note);
+
+	List<OperationHistoryEntity> getAudits(Long @{entryFristlower}Id, Page page);

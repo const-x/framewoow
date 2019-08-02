@@ -1,0 +1,180 @@
+package @{package}.@{modulelower}.service.impl;
+
+import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import @{package}.base.service.BaseServiceImpl;
+import @{package}.common.exception.ExceptionUtils;
+import @{package}.base.dao.BaseDao;
+import @{package}.@{modulelower}.dao.@{entryFristUpper}Dao;
+import @{package}.base.entity.IDEntity;
+import @{package}.security.entity.User;
+import @{package}.security.entity.UserTypeEnum;
+import @{package}.@{modulelower}.entity.@{entryFristUpper};
+import @{package}.@{modulelower}.service.@{componentFristUpper}Service;
+import @{package}.@{modulelower}.service.@{entryFristUpper}Condition;
+@{imports}
+import @{package}.util.dwz.Page;
+
+/**
+ * 
+ * @{componentAlias}后台服务
+ * 
+ * @author @{author}
+ * @since  @{date}
+ */
+@Service
+@Transactional
+public class @{componentFristUpper}ServiceImpl extends BaseServiceImpl implements @{componentFristUpper}Service {
+
+
+	@Autowired
+	@{entryFristUpper}Dao @{entryFristlower}Dao;
+
+
+	@Override
+	@Transactional
+	public Long save(@{entryFristUpper} @{entryFristlower}) {
+		try {
+		    this.beforeSave(@{entryFristlower});
+		    this.validate(@{entryFristlower});
+			@{entryFristlower}Dao.save(@{entryFristlower});
+@{aftersave}
+			super.cache(@{entryFristlower});
+			Long id = @{entryFristlower}.getId();
+			return id;
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+        return null;
+	}
+
+	@Override
+	@Transactional
+	public void delete(Long ...ids) {
+		try {
+		    List<@{entryFristUpper}> items = @{entryFristlower}Dao.findByIds(ids);
+			@{entryFristUpper}[] array = items.toArray(new @{entryFristUpper}[0]);
+		    this.beforeDelete(array);
+			@{entryFristlower}Dao.@{delMethod};@{delAudit}
+@{afterdel}
+			super.delInCache(@{entryFristUpper}.class, ids);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+	}
+
+    @Override
+	@Transactional(readOnly = true)
+	public @{entryFristUpper} getForUpdate(Long id) {
+		try {
+		    @{entryFristUpper} @{entryFristlower} = super.getInCache( @{entryFristUpper}.class, id);
+			if(@{entryFristlower} == null){
+				  @{entryFristlower} =  @{entryFristlower}Dao.findById(id);
+			}
+		    if(@{entryFristlower} == null ){
+			   ExceptionUtils.throwBizException("所选数据已删除，请刷新界面数据");
+			}
+			super.cache(@{entryFristlower});
+		    this.proUpdate(@{entryFristlower});
+			return @{entryFristlower};
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+        return null;
+	}
+
+	@Override
+	@Transactional
+	public void update(@{entryFristUpper} @{entryFristlower}) {
+		try {
+		    @{entryFristlower} = (@{entryFristUpper})this.beforeUpdate(@{entryFristlower}).get(0);
+		    this.validate(@{entryFristlower});
+			@{entryFristlower}Dao.update(@{entryFristlower});
+@{afterupdate}
+			super.updateInCache(@{entryFristlower});
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public @{entryFristUpper} getById(Long id) {
+		try {
+			@{entryFristUpper} @{entryFristlower} = super.getInCache( @{entryFristUpper}.class, id);
+			if(@{entryFristlower} == null){
+				  @{entryFristlower} =  @{entryFristlower}Dao.findById(id);
+			}
+			super.cache(@{entryFristlower});
+			return  @{entryFristlower};
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+        return null;
+	}
+	
+
+   
+    @Override
+	@Transactional(readOnly = true)
+	public List<@{entryFristUpper}> getByIds(Long ...ids) {
+		try {
+			return @{entryFristlower}Dao.findByIds(ids);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+        return null;
+	}
+   
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<@{entryFristUpper}> getByCondition(@{entryFristUpper}Condition condition, Page page) {
+		try {
+		    User user = super.getCurrentUser();
+		    Long accountId = null;
+		    //如果是系统级用户则允许查询所有数据
+			if(user != null && user.getUserType() != UserTypeEnum.SYSTEM.getValue()){
+				accountId = user.getId();
+			}
+			return @{entryFristlower}Dao.findByPage(accountId,condition,null, page);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ExceptionUtils.wapperException(e);
+		}
+		return null;
+	}
+
+
+    @Override
+	protected BaseDao getDaoByEntryType(Class<? extends IDEntity> clazz) {
+		if(clazz.equals(@{entryFristUpper}.class)){
+			return this.@{entryFristlower}Dao;
+		}else{
+			return null;
+		}
+	}
+	
+	
+	protected void validate(@{entryFristUpper} @{entryFristlower}) {
+@{validate}
+	}
+
+
+@{expands}	
+
+}

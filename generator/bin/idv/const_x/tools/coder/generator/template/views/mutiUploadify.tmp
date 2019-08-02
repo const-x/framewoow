@@ -1,0 +1,33 @@
+		$('#@{entity}_@{field}_upload').fileupload({
+			url : '<%=basePath%>/common/doc/uploadimg?@{size}',
+			autoUpload:true,	
+			dataType:'json',
+			acceptFileTypes:/(\.|\/)(gif|jpe?g|png)$/i,
+			maxFileSize:@{maxsize},
+			done: function (e, data) {
+				var obj=data.result;
+				if(obj.err==""){
+					var img = $("<img style='margin:5px' ondblclick='removeMutiUploaded(this)' width='120px'/>");
+			    	img.attr("src",obj.url);
+				    img.attr("id",obj.key);
+				    var views=$("#@{entity}_@{field}views");
+				    var count = views.children("img").length;
+				    if(count % 5 == 0){
+				    	 views.append($("<br/>"));
+				    }
+				    views.append(img);
+				}else{
+					$.messager.alert("错误", obj.err, 'error');
+				}
+			},
+			progressall: function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				if(progress == 100){
+					$('#@{entity}_@{field}_progress').hide();
+				}else{
+				   	$('#@{entity}_@{field}_progress').show();
+				    $('#@{entity}_@{field}_progress div').css('width',progress + '%'); 
+				}
+			}
+		});
+		

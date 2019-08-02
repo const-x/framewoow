@@ -1,0 +1,9 @@
+		StringBuilder @{field}where = new StringBuilder();
+		@{field}where.append(" a.@{column} = '" ).append(@{entryFristlower}.get@{fieldFirstUpper}()).append("'");
+		if(@{entryFristlower}.getId() != null){
+			@{field}where.append(" and a.id  <> " ).append(@{entryFristlower}.getId());
+		}
+		List<@{entryFristUpper}>  @{field}s = this.@{entryFristlower}Dao.findFieldsByWherePage(null, null,  @{field}where.toString(), null, null);
+		if ( @{field}s != null &&  @{field}s.size() > 0) {
+			ExceptionUtils.throwBizException("重复的@{fieldAlias}：" + @{entryFristlower}.get@{fieldFirstUpper}());
+		}

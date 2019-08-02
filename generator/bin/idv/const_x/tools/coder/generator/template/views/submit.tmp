@@ -1,0 +1,30 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+<form method="post" id="member_submit_form" action="<%=basePath%>/@{componentlower}/submit" data-options="novalidate:true" class="required-validate pageForm"
+  onsubmit="{return validateCallback(this);}">
+  <div class='dialogContentpanel'> 
+      <input type="hidden" name="id" value="${@{entrylower}.id}"/>
+	  <input type="hidden" name="modifytime" value="${@{entrylower}.modifytime}"/>
+	  
+      <input type="hidden" name="status" value="${status}" /> 
+	 
+      <label style='padding:10px 12px;width:100%;vertical-align:top;display:inline-block;'>确认${status eq 10 ? "提交":"收回"}当前记录？</label>
+      <br><br>
+	  <div style='padding:0 5px;'>
+   		<p style='-webkit-margin-before: 2px;'>
+   			<label style='width:60px;text-align:right;vertical-align:top;display:inline-block;'>备注信息:</label>
+   			<input class='easyui-textbox' type='text' name='note' data-options="multiline:true,height:100,width:300,validType:['maxlength[255]','required']"  />
+   		</p>
+      </div>	
+  </div>
+  <div class="dialogButtonpanel buttonPanel"> 
+      <p  style="float:right;text-decoration:none;">
+		<input type='submit' value='确认' class='easyui-linkbutton'  >
+		<input class='easyui-linkbutton' value='取消'  onclick='closeCurDialog(event)'>
+	  </p>	
+  </div>
+	
+</form>
+
+
+

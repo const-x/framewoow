@@ -1,0 +1,54 @@
+	private static final String LOOK_@{fieldUpper} = "/@{modulelower}/@{componentlower}/lookup_@{field}";
+	
+	@RequiresPermissions(value = { "@{componentlower}:edit", "@{componentlower}:save" })
+	@RequestMapping(value = "/lookup2@{field}/{ids}", method = { RequestMethod.GET })
+	public String lookup2@{field}(@PathVariable String ids,Map<String, Object> map) {
+		try{
+		    ArrayList<Long> array = new ArrayList<Long>();
+			if (StringUtils.isNotBlank(ids)) {
+				 String[] idStrs = ids.split(",");
+					for (int i = 0; i < idStrs.length; i++) {
+						String[] id = idStrs[i].split(":");
+						array.add(Long.parseLong(id[0]));
+					}
+			}
+		    if (array.size() > 0) {
+				List<@{refClass}> selected = @{refClassFristLower}Service.getByIds(array.toArray(new Long[0]));
+				List<Map<String,String>> a = new ArrayList<Map<String,String>>();
+				for (@{refClass} entity : selected) {
+					Map<String,String> m = new HashMap<String,String>();
+					m.put("id", entity.getId().toString());
+					m.put("name", entity.getShowName());
+					a.add(m);
+				}
+				map.put("selected", a);
+			}
+			return LOOK_@{fieldUpper};
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+	}
+	
+	@RequiresPermissions(value = { "@{componentlower}:edit", "@{componentlower}:save" })
+	@RequestMapping(value = "/lookup2@{field}", method = { RequestMethod.POST })
+	public @ResponseBody String lookup2@{field}(Page page,@{refClass} condition, Map<String, Object> map) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+			if (condition == null) {
+				condition = new @{refClass}();
+			}
+		
+			List<@{refClass}> @{field}s = @{refClassFristLower}Service.getByCondition(condition, page);
+			List<@{refClass}View> views = new ArrayList<@{refClass}View>(@{field}s.size());
+			for (@{refClass} @{field} : @{field}s) {
+				@{refClass}View view = new @{refClass}View(@{field});
+				views.add(view);
+			}
+			ajaxObject.setData(page, views);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("@{alias}获取失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+    }

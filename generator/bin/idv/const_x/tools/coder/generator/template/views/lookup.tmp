@@ -1,0 +1,39 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+	trimDirectiveWhitespaces="true"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+	<div class="searchPanel" >
+		<form id="@{field}SearchFm" refDataGrid="@{field}Grid"  onsubmit="return submitQuery(this)">
+		    <table>
+		      <tr>
+		        <td>
+			        <ul>
+				      <li><input class="easyui-textbox" name="keywords" style="width:100%" data-options="label:'@{fieldAlias}:'" value="${keywords}"></li>
+		            </ul> 
+		        </td>
+		        <td class="searchSubmit">
+			        <ul><li>
+			             <input type='submit' value='查询' iconCls="icon-search" class='easyui-linkbutton'  >
+			        </li></ul>
+		        </td>
+		      </tr>
+		    </table>
+	    </form>
+	</div>
+	<div style="padding:0px" class="dialogDatagrid">
+		<table class="easyui-datagrid" fit='true' id="@{field}Grid" refForm="@{field}SearchFm"
+				data-options="striped:true,onDblClickRow:bringback,url:'<%=basePath %>/@{componentlower}/lookup2@{field}',method:'POST'">
+			<thead>
+			<tr>
+				<th data-options="field:'@{refNameField}',width:150">@{fieldAlias}</th>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+    <div class="dialogButtonpanel buttonPanel"> 
+		<a href="javascript:void(0)" style="float:right;text-decoration:none;">
+			<input class='easyui-linkbutton' value='确定'  onclick="bringback(0, $('#@{field}Grid').datagrid('getSelected'))">
+			<input class='easyui-linkbutton' value='清空'  onclick="bringback(0,null)">
+			<input class='easyui-linkbutton' value='关闭'  onclick='closeCurDialog(event)'>	
+		</a>
+	</div>

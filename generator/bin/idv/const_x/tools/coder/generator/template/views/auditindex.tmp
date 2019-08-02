@@ -1,0 +1,49 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"
+	trimDirectiveWhitespaces="true"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+
+<form id="pagerForm" method="post" action="<%=basePath %>/@{componentlower}/viewaudit/${id}">
+	<input type="hidden" name="pageNum" value="${page.pageNum}" />
+	<input type="hidden" name="numPerPage" value="${page.numPerPage}" /> 
+	<input type="hidden" name="orderField" value="${page.orderField}" />
+	<input type="hidden" name="orderDirection" value="${page.orderDirection}" />
+	 
+	<input type="hidden" name="keywords" value="${keywords}"/>
+</form>
+
+
+<div class="pageContent">
+    
+    <table class="table" nowrapTD="false" layoutH="78" width="100%">
+		<thead>
+			<tr>
+				<th width="140"  >操作时间</th>
+				<th width="100"  >当前状态</th>
+				<th width="120"  >操作人</th>
+				<th>备注</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach var="item" items="${audits}">
+			<tr target="slt_uid" rel="${item.id}"  style="none" >
+				<td>${item.audittime}</td>
+				<td>${item.auditStatusStr}</td>
+				<td>${item.auditer.realname}</td>
+				<td>${item.note}</td>
+			</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	
+	<!-- 分页 -->
+	<c:import url="/WEB-INF/views/management/_frag/pager/dlgPanelBar.jsp"></c:import>
+		<div class="formBar">
+		<ul>
+			<li><div class="button">
+					<div class="buttonContent">
+						<button type="button" class="close">关闭</button>
+					</div>
+				</div></li>
+		</ul>
+	</div>
+</div>

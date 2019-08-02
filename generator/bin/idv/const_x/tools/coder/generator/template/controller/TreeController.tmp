@@ -1,0 +1,236 @@
+package @{package}.@{modulelower}.controller;
+
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import @{package}.base.controller.BaseControlller;
+import @{package}.@{modulelower}.entity.@{entryFristUpper};
+import @{package}.@{modulelower}.view.@{entryFristUpper}View;
+import @{package}.@{modulelower}.service.@{componentFristUpper}Service;
+import @{package}.@{modulelower}.service.@{entryFristUpper}Condition;
+import @{package}.security.entity.User;
+import @{package}.util.dwz.AjaxObject;
+import @{package}.util.dwz.Page;
+import @{package}.common.MapList;
+import @{package}.common.exception.ExceptionUtils;
+@{imports}
+
+/**
+ * @{moduleAlias}
+ * @author @{author}
+ * @since  @{date}
+ */
+@Controller
+@RequestMapping("/@{componentlower}")
+public class @{componentFristUpper}Controller extends BaseControlller{
+
+
+	private static final String CREATE = "/@{modulelower}/@{componentlower}/create";
+
+	private static final String UPDATE = "/@{modulelower}/@{componentlower}/update";
+	
+	private static final String LIST = "/@{modulelower}/@{componentlower}/list";
+	
+	private static final String TREE = "/@{modulelower}/@{componentlower}/tree";
+	
+
+
+	@Autowired
+	private @{componentFristUpper}Service @{componentFristLower}Service;
+
+
+    //-查询----------------------------------------------------------------------------
+	@RequiresPermissions("@{entrylower}:view")
+	@RequestMapping(value = "/tree", method = RequestMethod.GET)
+	public String tree( Map<String, Object> map) {
+		try {
+			List<@{entryFristUpper}> @{entryFristlower}s = @{entryFristlower}Service.getByCondition(new @{entryFristUpper}Condition(), null);;
+			@{entryFristUpper}View view = createTree(@{entryFristlower}s);
+			map.put("@{entryFristlower}", view);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+		return TREE;
+	}
+	
+	private @{entryFristUpper}View createTree(List<@{entryFristUpper}> @{entryFristlower}s){
+		Map<Long,@{entryFristUpper}View> viewmap = new  HashMap<Long,@{entryFristUpper}View>();
+		MapList<Long,@{entryFristUpper}View> viewChMap = new MapList<Long,@{entryFristUpper}View>();
+		for(@{entryFristUpper} @{entryFristlower} : @{entryFristlower}s){
+			@{entryFristUpper}View view = new @{entryFristUpper}View(@{entryFristlower});
+			Long id = (Long)view.get("id");
+			if(viewChMap.containsKey(id)){
+				view.addChildren(viewChMap.get(id));
+				viewChMap.remove(id);
+			}
+			viewmap.put(id, view);
+			if(view.get("parent") == null){
+				continue;
+			}
+			@{entryFristUpper} parent =  (@{entryFristUpper})view.get("parent");
+			Long parentId = parent.getId();
+			if(viewmap.containsKey(parentId)){
+				viewmap.get(parentId).addChild(view);
+			}else{
+				viewChMap.put(parentId, view);
+			}
+		}
+		if(viewChMap.size() > 0){
+			for(Long parentid : viewChMap.keySet()){
+				@{entryFristUpper}View parent =  viewmap.get(parentid);
+				parent.addChildren(viewChMap.get(parentid));
+				viewChMap.remove(parentid);
+			}
+		}
+		return viewmap.get(Long.parseLong("0"));
+	}
+	
+	@RequiresPermissions("@{entrylower}:view")
+	@RequestMapping(value = "/list/{parentId}", method = { RequestMethod.GET, RequestMethod.POST })
+	public String list(Page page, @PathVariable Long parentId, @{entryFristUpper}Condition condition, Map<String, Object> map,
+			HttpServletRequest request) {
+		try {
+			condition.setParentId(parentId);
+			
+			List<@{entryFristUpper}> @{entryFristlower}s = @{componentFristLower}Service.getByCondition(condition, page);
+
+			List<@{entryFristUpper}View> views = new ArrayList<@{entryFristUpper}View>();
+			for (@{entryFristUpper} @{entryFristlower} : @{entryFristlower}s) {
+				@{entryFristUpper}View view = new @{entryFristUpper}View(@{entryFristlower});
+				views.add(view);
+			}
+			map.put("@{entryFristlower}s", views);
+			map.put("condition", condition);
+			map.put("page", page);		
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+		return LIST;
+		
+	}
+  
+    // -新增-------------------------------------------------
+	@RequiresPermissions("@{componentlower}:save")
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public String preCreate(Map<String, Object> map) {
+	    try {
+@{beforecreate}
+            return CREATE;
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}	    
+	}
+
+	@RequiresPermissions("@{componentlower}:save")
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public @ResponseBody String create(@{entryFristUpper} @{entryFristlower}, HttpServletRequest request) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+			this.saveFileRel(@{entryFristlower});
+			@{componentFristLower}Service.save(@{entryFristlower});
+			ajaxObject.refreshTab("info_@{componentlower}", "添加成功！");
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("添加失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+    
+    // -修改-------------------------------------------------
+	@RequiresPermissions("@{componentlower}:edit")
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
+	public String preUpdate(HttpServletRequest request,@PathVariable Long id, Map<String, Object> map) {
+		try {
+@{beforeupdate}		    
+			@{entryFristUpper} @{entryFristlower} = @{componentFristLower}Service.getForUpdate(id);
+			@{entryFristUpper}View view = new @{entryFristUpper}View(@{entryFristlower});
+			convertFileToUrl(view);
+			map.put("@{entrylower}", view);
+			return UPDATE;
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			return super.alert("系统错误", e, map);
+		}
+	}
+
+
+	@RequiresPermissions("@{componentlower}:edit")
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public @ResponseBody String update(@{entryFristUpper} @{entryFristlower},HttpServletRequest request) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+			this.saveFileRel(@{entryFristlower});
+			@{componentFristLower}Service.update(@{entryFristlower});
+			ajaxObject.refreshTab("info_@{componentlower}", "修改成功！");
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("修改失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+    
+    // -删除-------------------------------------------------
+	@RequiresPermissions("@{componentlower}:delete")
+	@RequestMapping(value = "/delete/{ids}", method = RequestMethod.GET)
+	public @ResponseBody String delete(@PathVariable String ids,HttpServletRequest request) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+		    String[] cid = ids.split(",");
+		    Long[] @{entryFristlower}Ids = new Long[cid.length];
+		    for(int i = 0 ; i < cid.length; i++){
+		    	@{entryFristlower}Ids[i] = Long.valueOf(cid[i]);
+		    }
+		    
+		    List<@{entryFristUpper}> @{entryFristlower}s = @{componentFristLower}Service.getByIds(@{entryFristlower}Ids);
+			@{componentFristLower}Service.delete(@{entryFristlower}Ids);
+			this.delFileRel(@{entryFristlower}s.toArray(new @{entryFristUpper}[0]));
+		
+			ajaxObject.refreshTab("info_@{componentlower}", "删除成功！");
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("删除失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+
+	
+@{expands} 	
+
+@{refs}
+  
+@{viewpic} 
+
+@{viewText} 
+
+	
+	// 图片转换
+	private void convertFileToUrl(@{entryFristUpper}View view) {
+@{convert2url}
+	}
+
+	private void saveFileRel(@{entryFristUpper} entry) {
+@{saverel}
+	}
+
+	private void delFileRel(@{entryFristUpper}... entrys) {
+		for (@{entryFristUpper} entry : entrys) {
+@{delrel}
+		}
+	}
+   
+
+}

@@ -1,0 +1,43 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ include file="/WEB-INF/views/include.inc.jsp"%>
+<%@ page import="@{package}.@{modulelower}.view.@{entryFristUpper}View" %>
+<form method="post" id="@{componentlower}_edit_form" action="<%=basePath %>/@{componentlower}/update" data-options="novalidate:true" class="required-validate pageForm" 
+  onsubmit="{return  @{componentlower}_edit_submit(this);}">
+	<input type="hidden" name="id" value="${@{entrylower}.id }"/>
+    <input type="hidden" name="creater" value="${@{entrylower}.creater}"/>
+    <input type="hidden" name="createtime" value="${@{entrylower}.createtime}"/>
+    <input type="hidden" name="modifytime" value="${@{entrylower}.modifytime}"/>
+  <div class='dialogContentpanel'> 
+	<table cellpadding="5" class="fieldsPanel dlgFieldsPanel" style="padding:20px 0 0;">
+@{update}   		
+   	</table>
+@{updatebigs}     
+  </div>
+  <div class="dialogButtonpanel buttonPanel"> 
+      <p  style="float:right;text-decoration:none;">
+		<input type='submit' value='确定' class='easyui-linkbutton'  >
+		<input class='easyui-linkbutton' value='关闭'  onclick='closeCurDialog(event)'>
+	  </p>	
+  </div>
+	<script type="text/javascript">
+	$(function() {
+@{scripts}  
+	});
+	
+	function @{componentlower}_edit_submit(form){
+	    var $this = $(form);
+        try {
+			if (!$("#@{componentlower}_edit_form").form('enableValidation').form('validate')){  
+				return false; 
+	        }
+		@{validate}	
+	    } catch (err) {
+	    	console.log(err);
+	    	return false;
+        }
+        return validateCallback($this);
+	}
+	</script>
+	
+</form>
+

@@ -1,0 +1,65 @@
+        public Criteria and@{fieldFristUp}IsNull() {
+            addCriterion("@{column} is null");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}IsNotNull() {
+            addCriterion("@{column} is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}EqualTo(@{javaType} value) {
+            addCriterion("@{column} =", value, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}NotEqualTo(@{javaType} value) {
+            addCriterion("@{column} <>", value, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}GreaterThan(@{javaType} value) {
+            addCriterion("@{column} >", value, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}GreaterThanOrEqualTo(@{javaType} value) {
+            addCriterion("@{column} >=", value, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}LessThan(@{javaType} value) {
+            addCriterion("@{column} <", value, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}LessThanOrEqualTo(@{javaType} value) {
+            addCriterion("@{column} <=", value, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}In(List<@{javaType}> values) {
+            if (values == null || values.isEmpty()) {
+                throw new IllegalArgumentException("Value list for [@{field}] cannot be null or empty");
+            }
+            addCriterion("@{column} in", values, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}NotIn(List<@{javaType}> values) {
+            if (values == null || values.isEmpty()) {
+                throw new IllegalArgumentException("Value list for [@{field}] cannot be null or empty");
+            }
+            addCriterion("@{column} not in", values, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}Between(@{javaType} value1, @{javaType} value2) {
+            addCriterion("@{column} between", value1, value2, "@{field}");
+            return (Criteria) this;
+        }
+
+        public Criteria and@{fieldFristUp}NotBetween(@{javaType} value1, @{javaType} value2) {
+            addCriterion("@{column} not between", value1, value2, "@{field}");
+            return (Criteria) this;
+        }

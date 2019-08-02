@@ -1,0 +1,80 @@
+
+	private static final String AUDIT_INDEX = "/@{modulelower}/@{componentlower}/auditindex";
+
+	private static final String AUDIT = "/@{modulelower}/@{componentlower}/audit";
+	
+	private static final String SUBMIT = "/@{modulelower}/@{componentlower}/submit";
+
+    // -审批-------------------------------------------------
+    @RequiresPermissions("@{componentlower}:submit")
+	@RequestMapping(value = "/submit/{action}/{id}", method = RequestMethod.GET)
+	public String preSubmit(HttpServletRequest request,@PathVariable int action, @PathVariable Long id, Map<String, Object> map) {
+		try {
+			@{entryFristUpper} entry = @{componentFristLower}Service.getForSubmit(action,id);
+			@{entryFristUpper}View view = new @{entryFristUpper}View(entry);
+			map.put("@{entryFristlower}", view);
+			map.put("status", action);
+		} catch (Exception e) {
+			return super.alert("系统错误", e, map);
+		}
+		return SUBMIT;
+	}
+	
+	@RequiresPermissions("@{componentlower}:submit")
+	@RequestMapping(value = "/submit", method = RequestMethod.POST)
+	public @ResponseBody String submit(Viper viper,OperationHistoryEntity entity) {
+	   AjaxObject ajaxObject = new AjaxObject();
+		try {
+			@{componentFristLower}Service.audit(viper, entity.getStatus(), entity.getNote());
+			ajaxObject.refreshTab("info_@{componentlower}", "操作成功！");
+		} catch (Exception e) {
+			ajaxObject.error("操作失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+
+	@RequiresPermissions("@{componentlower}:audit")
+	@RequestMapping(value = "/audit/{action}/{id}", method = RequestMethod.GET)
+	public String preAudit(HttpServletRequest request, @PathVariable int action,@PathVariable Long id, Map<String, Object> map) {
+		try {
+			@{entryFristUpper} entry = @{componentFristLower}Service.getForAudit(action,id);
+			@{entryFristUpper}View view = new @{entryFristUpper}View(entry);
+			map.put("@{entryFristlower}", view);
+			map.put("status", action);
+		} catch (Exception e) {
+			return super.alert("系统错误", e, map);
+		}
+		return AUDIT;
+	}
+	
+	@RequiresPermissions("@{componentlower}:audit")
+	@RequestMapping(value = "/audit", method = RequestMethod.POST)
+	public @ResponseBody String audit(Viper viper,OperationHistoryEntity entity) {
+		AjaxObject ajaxObject = new AjaxObject();
+		try {
+			@{componentFristLower}Service.audit(viper, entity.getStatus(), entity.getNote());
+			ajaxObject.refreshTab("info_@{componentlower}", "操作成功！");
+		} catch (Exception e) {
+			ajaxObject.error("操作失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}
+	
+	@RequiresPermissions("@{componentlower}:view,@{componentlower}:audit,@{componentlower}:submit")
+	@RequestMapping(value = "/auditview/{id}", method = RequestMethod.GET)
+	public @ResponseBody String auditHistory(@PathVariable Long id, Page page) {
+	  	AjaxObject ajaxObject = new AjaxObject();
+		try {
+			List<OperationHistoryEntity> audits = @{componentFristLower}Service.getAudits(id, page);
+			List<OperationHistoryView> views = new ArrayList<OperationHistoryView>(audits.size());
+			for (OperationHistoryEntity audit : audits) {
+				OperationHistoryView view = new OperationHistoryView(audit);
+				views.add(view);
+			}
+			ajaxObject.setData(page, views);
+		} catch (Exception e) {
+		    logger.error(e.getLocalizedMessage(),e);
+			ajaxObject.error("数据获取失败："+e.getMessage());
+		}
+		return ajaxObject.toString();
+	}

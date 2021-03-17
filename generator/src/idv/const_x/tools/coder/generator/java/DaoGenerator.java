@@ -31,7 +31,7 @@ public class DaoGenerator  {
 		}else{
 			templateFile = ctx.getTemplateBasepath() +File.separator + "dao"+File.separator + File.separator+"Dao.tmp";
 		}
-		String saveToFile = ctx.getJavaBasepath()+File.separator + ctx.getModule().toLowerCase() +File.separator+ "dao" + File.separator+ ctx.getEntity() +"Dao.java";
+		String saveToFile = ctx.getJavaBasepath()+File.separator+ "dao" + File.separator+ ctx.getEntity() +"Dao.java";
 		File file = FileUtils.createFile(saveToFile);
 		
 		
@@ -82,7 +82,7 @@ public class DaoGenerator  {
 	}
 
 	public void clear(Context context) {
-		String saveToFile = context.getJavaBasepath() +File.separator+ context.getModule().toLowerCase()+File.separator + "dao" + File.separator+ context.getEntity() +"Dao.java";
+		String saveToFile = context.getJavaBasepath()+File.separator + "dao" + File.separator+ context.getEntity() +"Dao.java";
 		File file = new File(saveToFile);
 		if (file.exists()) {
 			file.delete();

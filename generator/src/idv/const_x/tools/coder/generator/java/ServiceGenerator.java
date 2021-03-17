@@ -53,7 +53,7 @@ public class ServiceGenerator {
 			importStr.append(string);
 		}
 		context.setRepalce("imports", importStr.toString());  
-		String saveToFile = ctx.getJavaBasepath() +File.separator + ctx.getModule().toLowerCase()+File.separator+ "service" + File.separator + ctx.getComponent() +"Service.java";
+		String saveToFile = ctx.getJavaBasepath() +File.separator+ "service" + File.separator + ctx.getEntity() +"Service.java";
 		File file = FileUtils.createFile(saveToFile);
 	    hodler.hodle(templateFile, file, context.getRepalce());
 	    files.add(file);
@@ -184,7 +184,7 @@ public class ServiceGenerator {
 		}else{
 			templateFile = ctx.getTemplateBasepath() +File.separator + "service"+ File.separator+"impl"+ File.separator+"ServiceImpl.tmp";
 		}
-		String saveToFile = ctx.getJavaBasepath()  +File.separator + ctx.getModule().toLowerCase()+File.separator+ "service"+File.separator+ File.separator+"impl"+ File.separator+ ctx.getComponent() +"ServiceImpl.java";
+		String saveToFile = ctx.getJavaBasepath()  +File.separator+ "service"+File.separator+ File.separator+"impl"+ File.separator+ ctx.getEntity() +"ServiceImpl.java";
 		File file = FileUtils.createFile(saveToFile);
 		hodler.hodle(templateFile, file, context.getRepalce());
 		files.add(file);
@@ -192,13 +192,13 @@ public class ServiceGenerator {
 	}
 
 	public void clear(Context context) {
-		String saveToFile = context.getJavaBasepath() + File.separator + context.getModule().toLowerCase() + File.separator + "service" + File.separator + context.getComponent() + "Service.java";
+		String saveToFile = context.getJavaBasepath() + File.separator + "service" + File.separator + context.getComponent() + "Service.java";
 		File file = new File(saveToFile);
 		if (file.exists()) {
 			file.delete();
 		}
 
-		saveToFile = context.getJavaBasepath() + File.separator + context.getModule().toLowerCase() + File.separator + "service" + File.separator + "impl" + File.separator + context.getComponent() + "ServiceImpl.java";
+		saveToFile = context.getJavaBasepath() + File.separator + "service" + File.separator + "impl" + File.separator + context.getComponent() + "ServiceImpl.java";
 		file = new File(saveToFile);
 		if (file.exists()) {
 			file.delete();

@@ -18,7 +18,7 @@ public class MapperGenerator implements IGenerator {
 	
 	@Override
 	public void clear(Context context) throws Exception {
-		String filepath = context.getMapperBasepath() + File.separator + context.getModule().toLowerCase() +  File.separator + context.getEntity() + "Mapper.xml";
+		String filepath = context.getMapperBasepath() + File.separator+ File.separator + context.getTable().toLowerCase()+ "-sqlmap.xml";
 	    File file = new File(filepath);
 	    if(file.exists()){
 	    	file.delete();
@@ -31,9 +31,10 @@ public class MapperGenerator implements IGenerator {
 		if(!context.isMapperAndDao()){
 			return files;
 		}
-		String filepath = context.getMapperBasepath() + File.separator + context.getModule().toLowerCase() +  File.separator + context.getEntity() + "Mapper.xml";
+		String filepath = context.getMapperBasepath() + File.separator+ File.separator + context.getTable().toLowerCase()+ "-sqlmap.xml";
 		File file = FileUtils.createFile(filepath);
-		
+
+
 		FileOutWriter writer = new FileOutWriter(filepath,true);
 		this.createHead(writer, context);
 		writer.write("<!-- 返回内容定义 -->\n");
@@ -54,9 +55,8 @@ public class MapperGenerator implements IGenerator {
 		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		writer.write("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n");
 		writer.write("<mapper namespace=\"");
-		writer.write(context.getBasepackage());
-		writer.write(".");
-		writer.write(context.getModule().toLowerCase()+".dao." + context.getEntity()+"Dao\" >\n");
+		writer.write(context.getRepalce().get("entryFristUpper"));
+		writer.write("\" >\n");
 	}
 	
 	private void createFoot(FileOutWriter writer){

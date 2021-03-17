@@ -29,36 +29,21 @@ public class SelectFieldGenerator {
 		return resultMapper.toString();
 	}
 	
-	private void createResult(StringBuilder resultMapper,List<Field> fields,String table,String id ){
-		resultMapper.append("<sql id=\"").append(id).append("\">\n").append("   select ");
-		List<Field> associations = new ArrayList<Field>();
-		int counter = 0;
-		for (Field data : fields) {
-			if(counter == 8){
-				resultMapper.append("\n          ");
-				counter = 0;
-			}
-			resultMapper.append("a.").append(data.getColumn()).append(" ,");
-			counter ++;
-		}
-	    resultMapper.deleteCharAt(resultMapper.length() - 1);
-		resultMapper.append("\n");
-		resultMapper.append("   from ").append(table).append(" a \n");
-		
-		resultMapper.append("</sql>\n\n");
-	}
+
 	
 	private void createLeftJoinResult(StringBuilder resultMapper,List<Field> fields,String table,String id ){
-		resultMapper.append("<sql id=\"").append(id).append("\">\n").append("   select ");
+
+		resultMapper.append("<sql id=\"table_name\"> ").append(table).append("_${tableId} </sql>\n\n");
+		resultMapper.append("<sql id=\"base_select\">\n").append("   select ");
 		List<Field> associations = new ArrayList<Field>();
 		int counter = 0;
 		for (Field data : fields) {
 			if(data.getType().isSimpleType()){
-				if(counter == 8){
+				if(counter == 6){
 					resultMapper.append("\n          ");
 					counter = 0;
 				}
-				resultMapper.append("a.").append(data.getColumn()).append(" ,");
+				resultMapper.append(data.getColumn()).append(" ,");
 				counter ++;
 				
 			}else{
@@ -77,7 +62,7 @@ public class SelectFieldGenerator {
 	
 	    resultMapper.deleteCharAt(resultMapper.length() - 1);
 		resultMapper.append("\n");
-		resultMapper.append("   from ").append(table).append(" a \n");
+		resultMapper.append("   from \n").append("   <include refid=\"table_name\"/>\n");
 		
 		for(Field data :associations){
 			ComplexType type = (ComplexType) data.getType();

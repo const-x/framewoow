@@ -1,180 +1,118 @@
 package @{package}.@{modulelower}.service.impl;
 
-import java.util.List;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import org.apache.commons.lang3.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import @{package}.base.service.BaseServiceImpl;
-import @{package}.common.exception.ExceptionUtils;
-import @{package}.base.dao.BaseDao;
+import com.raycloud.ding.commons.model.model.Result;
 import @{package}.@{modulelower}.dao.@{entryFristUpper}Dao;
-import @{package}.base.entity.IDEntity;
-import @{package}.security.entity.User;
-import @{package}.security.entity.UserTypeEnum;
-import @{package}.@{modulelower}.entity.@{entryFristUpper};
-import @{package}.@{modulelower}.service.@{componentFristUpper}Service;
-import @{package}.@{modulelower}.service.@{entryFristUpper}Condition;
-@{imports}
-import @{package}.util.dwz.Page;
+import @{package}.@{modulelower}.pojo.@{entryFristUpper};
+import @{package}.@{modulelower}.query.@{entryFristUpper}Query;
+import @{package}.@{modulelower}.service.@{entryFristUpper}Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * 
- * @{componentAlias}后台服务
- * 
+ *
+ * @{entityAlias}后台服务
+ *
  * @author @{author}
  * @since  @{date}
  */
 @Service
-@Transactional
-public class @{componentFristUpper}ServiceImpl extends BaseServiceImpl implements @{componentFristUpper}Service {
+public class @{entryFristUpper}ServiceImpl implements @{entryFristUpper}Service {
 
+    private static Logger logger = LoggerFactory.getLogger(@{entryFristUpper}ServiceImpl.class);
 
-	@Autowired
-	@{entryFristUpper}Dao @{entryFristlower}Dao;
-
-
-	@Override
-	@Transactional
-	public Long save(@{entryFristUpper} @{entryFristlower}) {
-		try {
-		    this.beforeSave(@{entryFristlower});
-		    this.validate(@{entryFristlower});
-			@{entryFristlower}Dao.save(@{entryFristlower});
-@{aftersave}
-			super.cache(@{entryFristlower});
-			Long id = @{entryFristlower}.getId();
-			return id;
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
-        return null;
-	}
-
-	@Override
-	@Transactional
-	public void delete(Long ...ids) {
-		try {
-		    List<@{entryFristUpper}> items = @{entryFristlower}Dao.findByIds(ids);
-			@{entryFristUpper}[] array = items.toArray(new @{entryFristUpper}[0]);
-		    this.beforeDelete(array);
-			@{entryFristlower}Dao.@{delMethod};@{delAudit}
-@{afterdel}
-			super.delInCache(@{entryFristUpper}.class, ids);
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
-	}
+    @Resource
+    private @{entryFristUpper}Dao @{entryFristUpper}Dao;
 
     @Override
-	@Transactional(readOnly = true)
-	public @{entryFristUpper} getForUpdate(Long id) {
-		try {
-		    @{entryFristUpper} @{entryFristlower} = super.getInCache( @{entryFristUpper}.class, id);
-			if(@{entryFristlower} == null){
-				  @{entryFristlower} =  @{entryFristlower}Dao.findById(id);
-			}
-		    if(@{entryFristlower} == null ){
-			   ExceptionUtils.throwBizException("所选数据已删除，请刷新界面数据");
-			}
-			super.cache(@{entryFristlower});
-		    this.proUpdate(@{entryFristlower});
-			return @{entryFristlower};
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
-        return null;
-	}
+    public Long add@{entryFristUpper}(@{entryFristUpper} record) {
+        try {
+            return @{entryFristUpper}Dao.add@{entryFristUpper}(record);
+        } catch (SQLException e) {
+            logger.error("dao add@{entryFristUpper} error.:" + e.getMessage(), e);
+        }
+        return -1L;
+    }
 
-	@Override
-	@Transactional
-	public void update(@{entryFristUpper} @{entryFristlower}) {
-		try {
-		    @{entryFristlower} = (@{entryFristUpper})this.beforeUpdate(@{entryFristlower}).get(0);
-		    this.validate(@{entryFristlower});
-			@{entryFristlower}Dao.update(@{entryFristlower});
-@{afterupdate}
-			super.updateInCache(@{entryFristlower});
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
-
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public @{entryFristUpper} getById(Long id) {
-		try {
-			@{entryFristUpper} @{entryFristlower} = super.getInCache( @{entryFristUpper}.class, id);
-			if(@{entryFristlower} == null){
-				  @{entryFristlower} =  @{entryFristlower}Dao.findById(id);
-			}
-			super.cache(@{entryFristlower});
-			return  @{entryFristlower};
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
-        return null;
-	}
-	
-
-   
     @Override
-	@Transactional(readOnly = true)
-	public List<@{entryFristUpper}> getByIds(Long ...ids) {
-		try {
-			return @{entryFristlower}Dao.findByIds(ids);
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
+    public @{entryFristUpper} get@{entryFristUpper}ByKey(Long id) {
+        try {
+            return @{entryFristUpper}Dao.get@{entryFristUpper}ByKey(id);
+        } catch (SQLException e) {
+            logger.error("dao get@{entryFristUpper}byKey error.:" + e.getMessage(), e);
+        }
         return null;
-	}
-   
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<@{entryFristUpper}> getByCondition(@{entryFristUpper}Condition condition, Page page) {
-		try {
-		    User user = super.getCurrentUser();
-		    Long accountId = null;
-		    //如果是系统级用户则允许查询所有数据
-			if(user != null && user.getUserType() != UserTypeEnum.SYSTEM.getValue()){
-				accountId = user.getId();
-			}
-			return @{entryFristlower}Dao.findByPage(accountId,condition,null, page);
-		} catch (Exception e) {
-		    logger.error(e.getLocalizedMessage(),e);
-			ExceptionUtils.wapperException(e);
-		}
-		return null;
-	}
+    }
 
 
     @Override
-	protected BaseDao getDaoByEntryType(Class<? extends IDEntity> clazz) {
-		if(clazz.equals(@{entryFristUpper}.class)){
-			return this.@{entryFristlower}Dao;
-		}else{
-			return null;
-		}
-	}
-	
-	
-	protected void validate(@{entryFristUpper} @{entryFristlower}) {
-@{validate}
-	}
+    public Integer update@{entryFristUpper}ByKey(@{entryFristUpper} record) {
+        try {
+            return @{entryFristUpper}Dao.update@{entryFristUpper}ByKey(record);
+        } catch (SQLException e) {
+            logger.error("dao update@{entryFristUpper} error.@{entryFristUpper}:" + e.getMessage(), e);
+        }
+        return -1;
+    }
+
+    @Override
+    public Integer update@{entryFristUpper}SelectiveByKey(@{entryFristUpper} record) {
+        try {
+            return @{entryFristUpper}Dao.update@{entryFristUpper}SelectiveByKey(record);
+        } catch (SQLException e) {
+            logger.error("dao update@{entryFristUpper} error.@{entryFristUpper}:" + e.getMessage(), e);
+        }
+        return -1;
+    }
 
 
-@{expands}	
+    @Override
+    public Result<@{entryFristUpper}> get@{entryFristUpper}ListWithPage(@{entryFristUpper}Query query) {
+        Result<@{entryFristUpper}> rs = null;
+        try {
+            rs = @{entryFristUpper}Dao.get@{entryFristUpper}ListWithPage(query);
+            if (!rs.isSuccess()) {
+                logger.error("get @{entryFristUpper} error." + rs.getErrorMsg());
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return rs;
+    }
+
+    @Override
+    public List<@{entryFristUpper}> get@{entryFristUpper}List(@{entryFristUpper}Query query) {
+        try {
+            return @{entryFristUpper}Dao.get@{entryFristUpper}List(query);
+        } catch (SQLException e) {
+            logger.error("get @{entryFristUpper} list error." + e.getMessage(), e);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Integer deleteByKey(Long id) {
+        try {
+            return @{entryFristUpper}Dao.deleteByKey(id);
+        } catch (SQLException e) {
+            logger.error("dao deleteByKey error. :" + e.getMessage(), e);
+        }
+        return -1;
+    }
+
+    @Override
+    public Integer deleteByCorpId(String corpId) {
+        try {
+            return @{entryFristUpper}Dao.deleteByCorpId(corpId);
+        } catch (SQLException e) {
+            logger.error("dao deleteByCorpId error. :" + e.getMessage(), e);
+        }
+        return -1;
+    }
 
 }

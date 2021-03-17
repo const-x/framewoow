@@ -10,7 +10,6 @@ public class JavaContext {
 	
 	private Context context;
 
-	private Map<String, String> repalce = new HashMap<String, String>();
     //是否为层级结构
 	private boolean isTree = false;
 	
@@ -38,11 +37,11 @@ public class JavaContext {
 
 
 	public Map<String, String> getRepalce() {
-		return repalce;
+		return context.getRepalce();
 	}
 
 	public void setRepalce(String property,String value) {
-		this.repalce.put(property, value);
+		this.context.getRepalce().put(property, value);
 	}
 
 }

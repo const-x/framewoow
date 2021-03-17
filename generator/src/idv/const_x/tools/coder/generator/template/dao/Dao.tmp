@@ -1,134 +1,133 @@
 package @{package}.@{modulelower}.dao;
 
-import java.util.List;
+import com.google.common.collect.Maps;
+import com.raycloud.ding.commons.model.model.Result;
+import com.raycloud.ding.commons.model.utils.CastUtils;
+import @{package}.@{modulelower}.pojo.@{entryFristUpper};
+import @{package}.@{modulelower}.query.@{entryFristUpper}Query;
+import com.raycloud.yc.eco.ding.app.com.common.dao.adapter.SqlSessionMapClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-import @{package}.base.dao.BaseDao;
-import org.apache.ibatis.annotations.Param;
-import @{package}.@{modulelower}.entity.@{entryFristUpper};
-import @{package}.@{modulelower}.service.@{entryFristUpper}Condition;
-@{refImport}
-@{auditImport}
-import @{package}.util.dwz.Page;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * @{entityAlias}数据库操作
  * @author @{author}
  * @since  @{date}
  */
+@Repository
+public class @{entryFristUpper}Dao {
 
-public interface @{entryFristUpper}Dao  extends BaseDao {
-	
-	
-	
-	/**
-	 * 根据id查询
-	 * 
-	 * @param id 实体ID
-	 * @return List<@{entryFristUpper}>
-	 *
-	 */
-	@{entryFristUpper} findById(@Param(value = "id") Long id);
-	
-	/**
-	 * 根据id查询
-	 * 
-	 * @param ids 实体ID
-	 * @return List<@{entryFristUpper}>
-	 *
-	 */
-	List<@{entryFristUpper}> findByIds(@Param(value = "ids") Long ...ids);
-	
-	
-	/**
-	 * 根据指定条件查找
-	 * 
-	 * @param condition 查询条件 可为空 
-	 * @param order     排序条件（不包含order by关键字） 可为空
-     * @param page      分页信息  可为空
-	 * @return List<@{entryFristUpper}>
-	 *
-	 */
-	List<@{entryFristUpper}> findByPage(@Param(value = "userId") Long userId, @Param(value = "condition") @{entryFristUpper}Condition condition,
-	                                               @Param(value = "order") String order, @Param(value = "page") Page page);
-	
-	/**
-	 * 根据指定条件查找指定字段值
-	 * 
-	 * @param fields    查询字段 为空时查所有
-	 * @param condition 查询条件 可为空 
-	 * @param order     排序条件（不包含order by关键字） 可为空
-     * @param page      分页信息  可为空
-	 * @return List<@{entryFristUpper}>
-	 *
-	 */
-	List<@{entryFristUpper}> findFieldsByPage(@Param(value = "userId") Long userId,@Param(value = "fields") String[] fields, @Param(value = "condition") @{entryFristUpper}Condition condition,
-	                                               @Param(value = "order") String order, @Param(value = "page") Page page);
-	                                               
+    private static Logger logger = LoggerFactory.getLogger(@{entryFristUpper}Dao.class);
+
+    @Autowired
+    private SqlSessionMapClient sqlSessionMapClient;
+
+
     /**
-	 * 根据指定条件查找指定字段值
-	 * 
-	 * @param fields    查询字段 为空时查所有
-	 * @param where 查询条件 可为空 
-	 * @param order     排序条件（不包含order by关键字） 可为空
-     * @param page      分页信息  可为空
-	 * @return List<@{entryFristUpper}>
-	 *
-	 */
-	List<@{entryFristUpper}> findFieldsByWherePage(@Param(value = "userId") Long userId,@Param(value = "fields") String[] fields, @Param(value = "where")  String where,
-	                                               @Param(value = "order") String order,@Param(value = "page") Page page);
-	                                               
-            
-	/**
-	 * 保存@{entityAlias}
-	 * 
-	 * @param @{entryFristlower}s 实体内容
-	 *
-	 */
-	void save(@{entryFristUpper} @{entryFristlower});
-    
-        
-	/**
-	 * 删除@{entityAlias}
-	 * 
-	 * @param ids 实体ID
-	 *
-	 */
-	void delete(@Param(value = "ids") Long ...ids);
-	
-	/**
-	 * 逻辑删除@{entityAlias}
-	 * 
-	 * @param ids 实体ID
-	 *
-	 */
-	void deleteInLogic(@Param(value = "modifyer") Long modifyer,@Param(value = "modifytime") String modifytime,@Param(value = "ids") Long ...ids);
-	
-	/**
-	 * 删除@{entityAlias}
-	 * 
-	 * @param where 查询条件（不包含where关键字）
-	 *
-	 */
-	void deleteByWhere(@Param(value = "where")  String where);
-	
-	/**
-	 * 逻辑删除@{entityAlias}
-	 * 
-	 * @param where 查询条件（不包含where关键字）
-	 *
-	 */
-	void deleteByWhereInLogic(@Param(value = "modifyer") Long modifyer,@Param(value = "modifytime") String modifytime, @Param(value = "where")  String where);
-    
-     /**
-     * 更新@{entityAlias}
-     * 
-     * @param @{entryFristlower}s 实体内容
+     * 新增数据
      *
-	 */
-	void update(@{entryFristUpper} @{entryFristlower});
+     * @return
+     * @throws SQLException
+     */
+    public Long add@{entryFristUpper}(@{entryFristUpper} record) throws SQLException {
+        int insert = sqlSessionMapClient.insert("@{entryFristUpper}.insert@{entryFristUpper}", record);
+        if (insert > 0) {
+            return record.getId();
+        }
+        return -1L;
+    }
+	
+    /**
+     * 根据主键查找
+     *
+     * @throws SQLException
+     */
+    public @{entryFristUpper} get@{entryFristUpper}ByKey(Long id) throws SQLException {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("id", id);
+        return sqlSessionMapClient.queryForObject("@{entryFristUpper}.get@{entryFristUpper}ByKey", params);
+    }
 
-@{refs}
+    /**
+     * 按条件分页查询
+     *
+     * @param query
+     * @return
+     */
+    public Result<@{entryFristUpper}> get@{entryFristUpper}ListWithPage(@{entryFristUpper}Query query) throws SQLException {
+        Result<@{entryFristUpper}> rs = new Result<@{entryFristUpper}>();
+        Map<String, Object> params = query.getParams();
+        Integer count = sqlSessionMapClient.queryForObject("@{entryFristUpper}.get@{entryFristUpper}ListCount", params);
+        rs.setCount(count);
+        if (count <= 0) {
+            return rs;
+        }
+        try {
+            rs.setList(get@{entryFristUpper}List(params, "@{entryFristUpper}.get@{entryFristUpper}ListWithPage"));
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return rs;
+    }
 
-@{audit}	
+    /**
+     * 按条件查询
+     *
+     * @param query
+     * @return
+     */
+    public List<@{entryFristUpper}> get@{entryFristUpper}List(@{entryFristUpper}Query query) throws SQLException {
+        return get@{entryFristUpper}List(query.getParams(), "@{entryFristUpper}.get@{entryFristUpper}List");
+    }
+
+
+    private List<@{entryFristUpper}> get@{entryFristUpper}List(Map<String, Object> params, String statementName) throws SQLException {
+        return CastUtils.cast(sqlSessionMapClient.queryForList(statementName, params));
+    }
+
+    /**
+     * 根据主键删除
+     *
+     * @return
+     * @throws SQLException
+     */
+    public Integer deleteByKey(Long id) throws SQLException {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("id", id);
+        return sqlSessionMapClient.delete("@{entryFristUpper}.deleteByKey", params);
+    }
+
+    public Integer deleteByCorpId(String corpId) throws SQLException {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("corpId", corpId);
+        return sqlSessionMapClient.delete("@{entryFristUpper}.deleteByCorpId", params);
+    }
+
+    /**
+     * 根据主键更新
+     *
+     * @return
+     * @throws SQLException
+     */
+    public Integer update@{entryFristUpper}ByKey(@{entryFristUpper} record) throws SQLException {
+        return sqlSessionMapClient.update("@{entryFristUpper}.update@{entryFristUpper}ByKey", record);
+    }
+
+    /**
+     * 根据主键更新
+     *
+     * @return
+     * @throws SQLException
+     */
+    public Integer update@{entryFristUpper}SelectiveByKey(@{entryFristUpper} record) throws SQLException {
+        return sqlSessionMapClient.update("@{entryFristUpper}.update@{entryFristUpper}SelectiveByKey", record);
+    }
 
 }

@@ -1,22 +1,75 @@
 package @{package}.@{modulelower}.service;
 
+import com.raycloud.ding.commons.model.model.Result;
+import @{package}.@{modulelower}.pojo.@{entryFristUpper};
+import @{package}.@{modulelower}.query.@{entryFristUpper}Query;
+
+
 import java.util.List;
-import @{package}.util.dwz.Page;
-
-import @{package}.base.service.BaseService;
-import @{package}.@{modulelower}.entity.@{entryFristUpper};
-@{imports}
-
 
 /**
- * 
- * @{componentAlias}后台服务
+ *
+ * @{entityAlias}后台服务
  *
  * @author @{author}
  * @since  @{date}
  */
-public interface @{componentFristUpper}Service  extends BaseService<@{entryFristUpper},@{entryFristUpper}Condition>{
-	
-@{expands}	
+public interface @{entryFristUpper}Service {
 
+    /**
+     * 基本插入
+     *
+     * @return
+     */
+    Long add@{entryFristUpper}(@{entryFristUpper} record);
+
+    /**
+     * 根据主键查询
+     */
+    @{entryFristUpper} get@{entryFristUpper}ByKey(Long id);
+
+    /**
+     * 根据条件查询分页查询
+     *
+     * @param query 查询条件
+     * @return
+     */
+    Result<@{entryFristUpper}> get@{entryFristUpper}ListWithPage(@{entryFristUpper}Query query);
+
+    /**
+     * 根据条件查询
+     *
+     * @param query 查询条件
+     * @return
+     */
+    List<@{entryFristUpper}> get@{entryFristUpper}List(@{entryFristUpper}Query query);
+
+    /**
+     * 根据主键更新
+     *
+     * @return
+     */
+    Integer update@{entryFristUpper}ByKey(@{entryFristUpper} record);
+
+    /**
+     * 根据主键更新非空字段
+     *
+     * @return
+     */
+    Integer update@{entryFristUpper}SelectiveByKey(@{entryFristUpper} record);
+
+
+    /**
+     * 根据主键删除
+     *
+     * @return
+     */
+    Integer deleteByKey(Long id);
+
+    /**
+     * 根据企业删除
+     *
+     * @return
+     */
+    Integer deleteByCorpId(String corpId);
 }

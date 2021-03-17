@@ -73,7 +73,7 @@ public class ControllerGenerator {
 		}
 		String imageTemp =  ctx.getTemplateBasepath() +File.separator + "controller"+File.separator + File.separator+"ImageViews.tmp";
 		String richTextTemp =  ctx.getTemplateBasepath() +File.separator + "controller"+File.separator + File.separator+"RichTextViews.tmp";
-		String saveToFile = ctx.getJavaBasepath() +File.separator +  ctx.getModule().toLowerCase() +File.separator+"controller"+File.separator+ File.separator+ ctx.getComponent() +"Controller.java";
+		String saveToFile = ctx.getJavaBasepath()  +File.separator+"controller"+File.separator+ File.separator+ ctx.getComponent() +"Controller.java";
 		File file = FileUtils.createFile(saveToFile);
 		
 		StringBuilder image2url = new StringBuilder();
@@ -214,7 +214,7 @@ public class ControllerGenerator {
 	}
 
 	public void clear(Context context) {
-		String saveToFile = context.getJavaBasepath() +File.separator+ context.getModule().toLowerCase() +File.separator + "controller"+ File.separator+ context.getComponent() +"Controller.java";
+		String saveToFile = context.getJavaBasepath()  +File.separator + "controller"+ File.separator+ context.getComponent() +"Controller.java";
 		File file = new File(saveToFile);
 		if (file.exists()) {
 			file.delete();

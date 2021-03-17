@@ -14,6 +14,7 @@ import idv.const_x.jdbc.table.meta.Type;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public class POJOGenerator {
 		List<Field> fields = ctx.getFields();
 		String basepackage = ctx.getBasepackage();
 		
-		String saveToFile = basepath  + module+ File.separator+ "entity"  + File.separator + entry + ".java";
+		String saveToFile = basepath  + module+ File.separator+ "pojo"  + File.separator + entry + ".java";
 		File file = FileUtils.createFile(saveToFile);
 		FileOutWriter writer = new FileOutWriter(file,true);
 		files.add(file);
@@ -45,7 +46,7 @@ public class POJOGenerator {
 				//如果没有指定枚举类名，则在本模块下创建
 				if(StringUtils.isBlank(enumtype.getClassName())){
 					String enumName = data.getName().substring(0, 1).toUpperCase() + data.getName().substring(1) + "Enum";
-					saveToFile = basepath + module + File.separator + "entity" + File.separator + enumName + ".java";
+					saveToFile = basepath + module + File.separator + "pojo" + File.separator + enumName + ".java";
 					file = FileUtils.createFile(saveToFile);
 					writer = new FileOutWriter(file,true);
 					files.add(file);
@@ -55,14 +56,14 @@ public class POJOGenerator {
 			}
 		}
 		
-		saveToFile = basepath + module + File.separator + "view" + File.separator + entry + "View.java";
-		file = FileUtils.createFile(saveToFile);
-		files.add(file);
-		writer = new FileOutWriter(file,true);
-		writer.write(this.createView(fields, alias, module, entry,basepackage,context.isTree(),context.getBaseContext().isNeedAudit()));
-		writer.close();
+//		saveToFile = basepath + module + File.separator + "view" + File.separator + entry + "View.java";
+//		file = FileUtils.createFile(saveToFile);
+//		files.add(file);
+//		writer = new FileOutWriter(file,true);
+//		writer.write(this.createView(fields, alias, module, entry,basepackage,context.isTree(),context.getBaseContext().isNeedAudit()));
+//		writer.close();
 		
-		saveToFile = basepath + module + File.separator + "service" + File.separator + entry + "Condition.java";
+		saveToFile = basepath + module + File.separator + "query" + File.separator + entry + "Query.java";
 		file = FileUtils.createFile(saveToFile);
 		files.add(file);
 		writer = new FileOutWriter(file,true);
@@ -77,10 +78,20 @@ public class POJOGenerator {
 			String module, String entry, String basepackage, boolean tree,
 			boolean level) {
 		StringBuilder builder = new StringBuilder();
-		String packages = basepackage+"."+ module + ".service" ;
+		String packages = basepackage+"."+ module + ".query" ;
 		builder.append("package ").append(packages).append(";\n\n\n");
-		builder.append("import ").append(basepackage).append(".base.service.BaseCondition;\n");
-		
+		builder.append("import com.raycloud.ding.commons.model.enums.Comparison;\n");
+		builder.append("import com.raycloud.ding.commons.model.enums.SortDirection;\n");
+		builder.append("import com.raycloud.ding.commons.model.model.Condition;\n");
+		builder.append("import com.raycloud.ding.commons.model.model.ConditionArea;\n");
+		builder.append("import com.raycloud.ding.commons.model.model.ConditionGroup;\n");
+		builder.append("import com.raycloud.ding.commons.model.model.OrderField;\n");
+		builder.append("import com.raycloud.ding.commons.model.query.BaseQuery;\n");
+
+		builder.append("import java.util.ArrayList;\n");
+		builder.append("import java.util.Arrays;\n");
+		builder.append("import java.util.List;\n");
+
 		
 		List<String> imported = new ArrayList<String>();
 		for (Field data : fields) {
@@ -96,11 +107,19 @@ public class POJOGenerator {
 			}
 		}
 		
-		
-		
 		builder.append(" \n/**\n * ").append(alias).append("查询条件\n").append(" */ \n");
-		builder.append("public class ").append(entry).append("Condition extends  BaseCondition ").append("{ \n\n");
-		builder.append("	private static final long serialVersionUID = 1L;\n\n");
+		builder.append("public class ").append(entry).append("Query extends  BaseQuery ").append("{ \n\n");
+
+		builder.append("	private List<Condition> base;\n\n");
+
+		builder.append("	public ").append(entry).append("Query(){\n");
+		builder.append("		this.base = new ArrayList<>();\n");
+		builder.append("		ConditionGroup group = new ConditionGroup();\n");
+		builder.append("		group.setConditions(base);\n");
+		builder.append("		ConditionArea area = new ConditionArea();\n");
+		builder.append("		area.setGroups(Arrays.asList(group));\n");
+		builder.append("		this.areas =Arrays.asList(area);\n");
+		builder.append("	}\n\n");
 	
 		if(tree){
 			String classname = basepackage+"."+ module + ".entity."+ entry;
@@ -109,30 +128,41 @@ public class POJOGenerator {
 		
 		for (Field data : fields) {
 			if(data.isCondition()){
-				String field = data.getName();
+				String uppder = CamelCaseUtils.toFristUpper(data.getName());
 				Type type = data.getType();
-				if(data.getType() == SimpleTypeEnum.DATETIME || data.getType() == SimpleTypeEnum.DATE){
-					builder.append(VOAttributeUtils.createPOJOField(data.getName()+"Begin", "String", data.getAlias()+" 从 "));
-					builder.append(VOAttributeUtils.createPOJOField(data.getName()+"End", "String", data.getAlias()+" 到 "));
-				}else{
-					builder.append(VOAttributeUtils.createPOJOField(field, type.getJavaType(), data.getAlias()));
+				builder.append("	public ").append(entry).append("Query set").append(uppder).append("(").append(data.getType().getJavaType()).append(" ").append(data.getName()).append("){\n");
+				builder.append("		Condition condition = new Condition(\"").append(data.getColumn()).append("\",Comparison.EQUAL,").append(data.getName()).append(");\n");
+				builder.append("		this.base.add(condition);\n");
+				builder.append("		return this;\n");
+				builder.append("	}\n\n");
+				if(data.getType() == SimpleTypeEnum.DATETIME || data.getType() == SimpleTypeEnum.DATE|| data.getType() == SimpleTypeEnum.TIMESTAMP){
+					builder.append("	public ").append(entry).append("Query set").append(uppder).append("Start(").append(data.getType().getJavaType()).append(" ").append(data.getName()).append("){\n");
+					builder.append("		Condition condition = new Condition(\"").append(data.getColumn()).append("\",Comparison.START,").append(data.getName()).append(");\n");
+					builder.append("		this.base.add(condition);\n");
+					builder.append("		return this;\n");
+					builder.append("	}\n\n");
+
+					builder.append("	public ").append(entry).append("Query set").append(uppder).append("End(").append(data.getType().getJavaType()).append(" ").append(data.getName()).append("){\n");
+					builder.append("		Condition condition = new Condition(\"").append(data.getColumn()).append("\",Comparison.END,").append(data.getName()).append(");\n");
+					builder.append("		this.base.add(condition);\n");
+					builder.append("		return this;\n");
+					builder.append("	}\n\n");
 				}
+
+
+
 			}
 		}
 		
 		builder.append("\n\n");
 		
 		for (Field data : fields) {
-			if(data.isCondition()){
-				String field = data.getName();
-				Type type = data.getType();
-				if(data.getType() == SimpleTypeEnum.DATETIME || data.getType() == SimpleTypeEnum.DATE){
-					builder.append(VOAttributeUtils.createGetterAndSetter(data.getName()+"Begin", "String", data.getAlias()+" 从 "));
-					builder.append(VOAttributeUtils.createGetterAndSetter(data.getName()+"End", "String", data.getAlias()+" 到 "));
-					builder.append("\n\n");
-				}else{
-					builder.append(VOAttributeUtils.createGetterAndSetter(field, type.getJavaType(), data.getAlias()));
-				}
+			if(data.isSortable()){
+				String uppder = CamelCaseUtils.toFristUpper(data.getName());
+				builder.append("	public ").append(entry).append("Query orderBY").append(uppder).append("(boolean isAsc){\n");
+				builder.append("		orderFields.add(new OrderField(\"").append(data.getColumn()).append("\", isAsc ? SortDirection.ASC : SortDirection.DESC));\n");
+				builder.append("		return this;\n");
+				builder.append("	}\n\n");
 			}
 		}
 		
@@ -143,23 +173,15 @@ public class POJOGenerator {
 
 	private String createEntry(List<Field> fields, String alias, String module, String entry,String basepackage,boolean isTree,boolean isLevel,boolean isAudit) {
 		StringBuilder builder = new StringBuilder();
-		String packages = basepackage+"."+ module + ".entity" ;
+		String packages = basepackage+"."+ module + ".pojo" ;
 		builder.append("package ").append(packages).append(";\n\n\n");
 		String extend;
-		builder.append("import ").append(basepackage).append(".base.entity.IMapperEntity;\n");
-		if(isTree){
-			builder.append("import ").append(basepackage).append(".base.entity.TreeEntity;\n");
-			extend = " extends TreeEntity<" + entry + ">";
-		}else if(isLevel){
-			builder.append("import ").append(basepackage).append(".base.entity.LevelEntry;\n");
-			extend = " extends LevelEntry" ;
-		}else if(isAudit){
-			builder.append("import ").append(basepackage).append(".base.entity.AuditEntity;\n");
-			extend = " extends AuditEntity" ;
-		}else{
-			builder.append("import ").append(basepackage).append(".base.entity.IDEntity;\n");
-			extend = " extends IDEntity" ;
-		}
+
+		builder.append("import com.alibaba.fastjson.annotation.JSONField;\n");
+		builder.append("import com.alibaba.fastjson.annotation.JSONType;\n");
+		builder.append("import com.raycloud.yc.eco.ding.app.com.deploy.business.deploy.pojo.BusinessDeployBasePojo;\n");
+		extend = " extends BusinessDeployBasePojo" ;
+
 		List<String> imported = new ArrayList<String>();
 		for (Field data : fields) {
 			Type type = data.getType();
@@ -177,18 +199,14 @@ public class POJOGenerator {
 			}
 		}
 		builder.append(" \n/**\n * ").append(alias).append("\n").append(" */ \n");
-		builder.append("public class ").append(entry).append(extend).append(" implements  IMapperEntity ").append("{ \n\n");
+		builder.append("@JSONType(ignores = {\"splitTableName\", \"splitDBName\", \"tableId\", \"extendJson\", \"extend_json\"})\n");
+		builder.append("public class ").append(entry).append(extend).append("{ \n\n");
 		builder.append("	private static final long serialVersionUID = 1L;\n\n");
 		
 		
 		for (Field data : fields) {
 			String field = data.getName();
-			if(field.equalsIgnoreCase("id") || field.equalsIgnoreCase("parent")
-					|| field.equalsIgnoreCase("creater")|| field.equalsIgnoreCase("createtime")|| field.equalsIgnoreCase("modifytime")|| field.equalsIgnoreCase("modifyer")
-					|| field.equalsIgnoreCase("auditer")|| field.equalsIgnoreCase("auditStatus")|| field.equalsIgnoreCase("audittime")
-					|| field.equalsIgnoreCase("level")){
-			    continue;
-			}
+
 			Type type = data.getType();
 			String javatype = data.getType().getJavaType();
 			if(!type.isSimpleType()){
@@ -208,12 +226,7 @@ public class POJOGenerator {
 		
 		for (Field data : fields) {
 			String field = data.getName();
-			if(field.equalsIgnoreCase("id") || field.equalsIgnoreCase("parent")
-					|| field.equalsIgnoreCase("creater")|| field.equalsIgnoreCase("createtime")|| field.equalsIgnoreCase("modifytime")|| field.equalsIgnoreCase("modifyer")
-					|| field.equalsIgnoreCase("auditer")|| field.equalsIgnoreCase("auditStatus")|| field.equalsIgnoreCase("audittime")
-					|| field.equalsIgnoreCase("level")){
-			    continue;
-			}
+
 			Type type = data.getType();
 			String fieldtype = type.getJavaType();
 			if(!type.isSimpleType()){
@@ -232,31 +245,11 @@ public class POJOGenerator {
 				}
 			}
 			
-			String methodName = CamelCaseUtils.toFristUpper(field);
-			builder.append("	/** \n	 * 设置" + alias + " \n	 * \n	 * @param " + type + "\n	 */ \n");
-			builder.append("	public void set" + methodName + "(" + fieldtype + " value) {\n");
-			builder.append("	  super.setAttrbute(FIELD_" + field.toUpperCase() + ", value); \n");
-			builder.append("	} \n");
-			
-			builder.append(VOAttributeUtils.createGetter(field, fieldtype, data.getAlias()));
+			builder.append(VOAttributeUtils.createGetterAndSetter(field, fieldtype, data.getAlias()));
 		}
-	
-		builder.append("\n	@Override\n")
-		.append("	public String getShowName() {\n")
-		.append("		return null;\n")
-		.append("	}\n\n");
+
 		
-		for (Field data : fields) {
-			String field = data.getName();
-			if(field.equalsIgnoreCase("id") || field.equalsIgnoreCase("parent")
-					|| field.equalsIgnoreCase("creater")|| field.equalsIgnoreCase("createtime")|| field.equalsIgnoreCase("modifytime")|| field.equalsIgnoreCase("modifyer")
-					|| field.equalsIgnoreCase("auditer")|| field.equalsIgnoreCase("auditStatus")|| field.equalsIgnoreCase("audittime")
-					|| field.equalsIgnoreCase("level")){
-			    continue;
-			}
-			builder.append("	/**  字段名:").append(data.getAlias()).append(" */\n");
-			builder.append("	public static final String FIELD_").append(data.getName().toUpperCase()).append(" = \"").append(data.getName()).append("\";\n");
-		}
+
 		builder.append("}");
 		return builder.toString();
 	}
@@ -264,11 +257,10 @@ public class POJOGenerator {
 	
 	private String createEnum(Field field,String enumName, String module,String basepackage ){
 		StringBuilder builder = new StringBuilder();
-		builder.append("package ").append(basepackage).append("." ).append(module).append(".entity" ).append(";\n\n");
-		builder.append("import ").append(basepackage).append(".base.entity.IEnum;\n\n\n");
+		builder.append("package ").append(basepackage).append("." ).append(module).append(".pojo" ).append(";\n\n");
 		
 		builder.append(" /**\n * ").append(field.getAlias()).append("枚举\n").append(" */ \n");
-		builder.append("  public enum ").append(enumName).append("  implements IEnum { \n\n ");
+		builder.append("  public enum ").append(enumName).append(" { \n\n ");
 		
 		EnumType type = (EnumType)field.getType();
 		

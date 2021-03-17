@@ -5,7 +5,7 @@ public enum SimpleTypeEnum implements Type {
 	/**
 	 * 主键
 	 */
-	ID("Long", "DECIMAL", 19, true),
+	ID("Long", "BIGINT", 20, true),
 	
 	/**
 	 * 字符
@@ -35,12 +35,12 @@ public enum SimpleTypeEnum implements Type {
 	/**
 	 * 整形数字
 	 */
-	INTEGER("Integer", "DECIMAL", 10, false),
+	INTEGER("Integer", "BIGINT", 10, false),
 
 	/**
 	 * 整形数字
 	 */
-	LONG("Long", "DECIMAL", 19, false),
+	LONG("Long", "BIGINT", 20, false),
 
 	/**
 	 * 浮点数字
@@ -55,12 +55,12 @@ public enum SimpleTypeEnum implements Type {
 	/**
 	 * 日期
 	 */
-	DATE("String", "CHAR", 10, false),
+	DATE("String", "TIMESTAMP", 6, false),
 
 	/**
 	 * 日期（带时间）
 	 */
-	DATETIME("String", "CHAR", 19, false),
+	DATETIME("String", "TIMESTAMP", 6, false),
 
 	/**
 	 * 时间
@@ -70,12 +70,12 @@ public enum SimpleTypeEnum implements Type {
 	/**
 	 * 时间戳
 	 */
-	TIMESTAMP("Long", "TIMESTAMP", 19, false),
+	TIMESTAMP("Long", "TIMESTAMP", 6, false),
 
 	/**
 	 * 布尔型
 	 */
-	BOOLEAN("Integer", "DECIMAL", 1, false),
+	BOOLEAN("Integer", "tinyint", 1, false),
 
 	/**
 	 * 图片（与ImageField配套使用）

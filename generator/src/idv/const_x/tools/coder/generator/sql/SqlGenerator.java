@@ -23,14 +23,14 @@ public class SqlGenerator implements IGenerator{
 		File file = FileUtils.createFile(filepath);
 		FileOutWriter writer = new FileOutWriter(filepath,false);
 		if(context.getDbType() == DBType.ORACLE){
-			writer.write(new OraclePermissionGenerator().generator(context));
+//			writer.write(new OraclePermissionGenerator().generator(context));
 			writer.write(new OracleTableGenerator().generator(context));
 		}else{
-			writer.write(new MysqlPermissionGenerator().generator(context));
+//			writer.write(new MysqlPermissionGenerator().generator(context));
 			writer.write(new MysqlTableGenerator().generator(context));
 		}
 		
-		writer.write(new MetaGenerator().generator(context));
+//		writer.write(new MetaGenerator().generator(context));
 		
 		writer.close();
 		

@@ -6,7 +6,9 @@ import idv.const_x.tools.coder.generator.Field;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,8 +52,8 @@ public class Context {
     boolean views = true;
     boolean sqls = true;
     boolean isSystemData = false;
-    
-    
+
+	private Map<String, String> repalce = new HashMap<String, String>();
     
     List<Field> fields = new ArrayList<Field>(); 
     
@@ -61,9 +63,9 @@ public class Context {
     }
     
     public Context(){
-    	templateBasepath = Context.class.getResource("/").getPath();
+    	templateBasepath = Context.class.getResource("").getPath();
     	templateBasepath = templateBasepath.replace("bin", "src");
-    	templateBasepath = templateBasepath + "\\idv\\const_x\\tools\\coder\\generator\\template";
+    	templateBasepath = templateBasepath +  File.separator+"template";
     }
     
 	public String getBasepackage() {
@@ -156,10 +158,11 @@ public class Context {
 	
 	public String getTable() {
 		if(tableName == null){
+
 			if(StringUtils.isNotBlank(tableProfix)){
-				tableName = tableProfix +"_"+ module + "_" + CamelCaseUtils.toUnderlineName(entity);
+				tableName = tableProfix + "_" + CamelCaseUtils.toUnderlineName(entity);
 			}else{
-				tableName = (module + "_" + CamelCaseUtils.toUnderlineName(entity));
+				tableName = CamelCaseUtils.toUnderlineName(entity);
 			}
 			tableName = tableName.toUpperCase();
 		}
@@ -178,7 +181,7 @@ public class Context {
 
 	public String getMapperBasepath() {
 		if(mapperBasepath == null){
-			this.mapperBasepath = basepath +File.separator + "resources"+ File.separator +"mybatis"+ File.separator +"mapper";
+			this.mapperBasepath = basepath +File.separator + "resources"+  File.separator +"mappers";
 		}
 		return mapperBasepath;
 	}
@@ -342,8 +345,14 @@ public class Context {
 		return hasExport;
 	}
 
-    
-    
+
+	public Map<String, String> getRepalce() {
+		return repalce;
+	}
+
+	public void setRepalce(String property,String value) {
+		this.repalce.put(property, value);
+	}
 	
 	
 	

@@ -132,7 +132,7 @@ public class VOAttributeUtils {
 
 			StringBuilder str = new StringBuilder();
 
-			str.append("	/** \n	 * 设置" + alias + " \n	 * \n	 * @param " + type + "\n	 */ \n");
+			str.append("	/** \n	 * 设置" + alias + " \n	 * \n	 */ \n");
 			str.append("	public void set" + methodName + "(" + type + " " + setField + ") {\n");
 			str.append("	  this." + field + " = " + setField + "; \n");
 			str.append("	} \n");

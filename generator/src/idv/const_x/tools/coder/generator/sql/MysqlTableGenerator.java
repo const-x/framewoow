@@ -72,7 +72,7 @@ public class MysqlTableGenerator {
 		if(field.isPrimary()){
 			jdbcType = "BIGINT";
 		}
-		builder.append("    ").append(field.getColumn().toUpperCase()).append(" ").append(jdbcType);
+		builder.append("    ").append(field.getColumn().toLowerCase()).append(" ").append(jdbcType);
 		if(type.getLength() != -1){
 			builder.append("(").append(type.getLength());
 			if(type.getscale() != -1){

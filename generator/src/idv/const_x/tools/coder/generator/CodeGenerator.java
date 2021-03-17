@@ -114,18 +114,7 @@ public class CodeGenerator {
 				field.setDefaultValue(0);
 				context.addField(field);
 			}
-			
-			
-//			ComplexType complex = new ComplexType(context.getBasepackage() + ".security.entity.User");
-//			complex.setRelationship(ComplexType.ONE_TO_ONE);
-//			complex.setRefNameField("realname");
-//			complex.setRefNameColumn("realname");
-//			complex.setRefTable("SECURITY_USER");
-//			Field field = new Field("creater", complex, "创建人", false, false);
-//			field.setColumn("CREATER");
-//			context.addField(field);
-//			 field = new Field("modifyer", complex, "最后修改人", false, false);
-//			 field.setColumn("MODIFYER");
+
 			
 			if(context.needAudit){
 				Field field = new Field("auditer", SimpleTypeEnum.LONG, "最后审批人", false, false);
@@ -143,33 +132,45 @@ public class CodeGenerator {
 				context.addField(field);
 			}
 			
-		    Field field = new Field("creater", SimpleTypeEnum.LONG, "创建人", false, false);
+		    Field field = new Field("creater", SimpleTypeEnum.STRING, "创建人", false, false);
 			field.setColumn("CREATER");
 			field.setEditable(false);
 			field.setDisplay(false);
 			context.addField(field);
 			
-			field = new Field("modifyer", SimpleTypeEnum.LONG, "最后修改人", false, false);
+			field = new Field("modifyer", SimpleTypeEnum.STRING, "最后修改人", false, false);
 			field.setColumn("MODIFYER");
 			field.setEditable(false);
 			field.setDisplay(false);
 			context.addField(field);
 			
-			 field = new Field("createtime", SimpleTypeEnum.DATETIME, "创建时间", false, false);
+			 field = new Field("createtime", SimpleTypeEnum.TIMESTAMP, "创建时间", false, false);
 			context.addField(field);
-			 field = new Field("modifytime", SimpleTypeEnum.DATETIME, "最后修改时间", false, false);
+			 field = new Field("modifytime", SimpleTypeEnum.TIMESTAMP, "最后修改时间", false, false);
 			context.addField(field);
-			
-			
+
+			String moduleFristlower =  context.getModule().substring(0, 1).toLowerCase() + context.getModule().substring(1);
+			String entityFristlower =  context.getEntity().substring(0, 1).toLowerCase() + context.getEntity().substring(1);
+
+			context.setRepalce("modulelower", context.getModule().toLowerCase());
+			context.setRepalce("moduleAlias", context.getModuleAlias());
+			context.setRepalce("moduleFristUpper", context.getModule());
+			context.setRepalce("moduleFristLower", moduleFristlower);
+
+			context.setRepalce("entrylower", context.getEntity().toLowerCase());
+			context.setRepalce("entityAlias", context.getEntityAlias());
+			context.setRepalce("entryFristUpper",  context.getEntity());
+			context.setRepalce("entryFristlower", entityFristlower);
+
+			context.setRepalce("table", context.getTable());
 
 			context.addFields(associations);
 
 			files.addAll(new MapperGenerator().generator(context));
 			files.addAll(new JavaGenerator().generator(context));
 			files.addAll(new SqlGenerator().generator(context));
-			files.addAll(new ViewGenerator().generator(context));
-			
-			files.addAll(new Log4jGenerator().generator(context));
+//			files.addAll(new ViewGenerator().generator(context));
+//			files.addAll(new Log4jGenerator().generator(context));
 
 			System.out.println("已生成以下文件：");
 			for (File file : files) {

@@ -17,7 +17,7 @@ public class ResultMapGenerator {
 		 StringBuilder resultMapper = new  StringBuilder();
 		 StringBuilder complexMapper = new  StringBuilder();
 		 StringBuilder resultMapperPlus = new  StringBuilder();
-		resultMapper.append("<resultMap id=\"").append(context.getEntity().toLowerCase()).append("Result").append("\" type=\"")
+		resultMapper.append("<resultMap id=\"").append(context.getRepalce().get("entryFristlower")).append("\" type=\"")
 		.append(context.getEntity()).append("\" > \n"); 
 		for (Field data : context.getFields()) {
 			createMapperField(data, data.getType(), data.getAlias(),resultMapper,complexMapper,resultMapperPlus);

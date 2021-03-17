@@ -57,12 +57,12 @@ public class EnumType  implements Type {
 
 	@Override
 	public String getJdbcType() {
-		return "DECIMAL";
+		return "TINYINT";
 	}
 
 	@Override
 	public int getLength() {
-		return 2;
+		return 4;
 	}
 
 	@Override

@@ -1,0 +1,95 @@
+=== mysql ===
+ALTER TABLE `template_flow_instance_12`
+ADD COLUMN `@{column}` timestamp(0) NULL COMMENT '@{alias}';
+
+=== pojo ===
+    /** @{alias} **/
+    private Date @{fieldFristLow};
+
+    /** 获取 @{alias} **/
+    public Date get@{fieldFristUp}() {
+        return @{fieldFristLow};
+    }
+
+    /** 设置 @{alias} **/
+    public void set@{fieldFristUp}(Date @{fieldFristLow}) {
+        this.@{fieldFristLow} = @{fieldFristLow};
+    }
+
+=== queryer ===
+    /** @{alias} **/
+    private Date @{fieldFristLow}Start;
+
+    public Date get@{fieldFristUp}Start() {
+        return @{fieldFristLow}Start;
+    }
+
+    public XXXQuery set@{fieldFristUp}Start(Date @{fieldFristLow}) {
+        this.@{fieldFristLow}Start = @{fieldFristLow};
+        this.params.put("@{fieldFristLow}Start", @{fieldFristLow});
+        return this;
+    }
+
+    private Date @{fieldFristLow}End;
+
+    public Date get@{fieldFristUp}End() {
+        return @{fieldFristLow}End;
+    }
+
+    public XXXQuery set@{fieldFristUp}End(Date @{fieldFristLow}) {
+        this.@{fieldFristLow}End = @{fieldFristLow};
+        this.params.put("@{fieldFristLow}End", @{fieldFristLow});
+        return this;
+    }
+
+    private Date @{fieldFristLow}Equal;
+
+    public Date get@{fieldFristUp}Equal() {
+        return @{fieldFristLow}Equal;
+    }
+
+    public XXXQuery set@{fieldFristUp}Equal(Date @{fieldFristLow}) {
+        this.@{fieldFristLow}Equal = @{fieldFristLow};
+        this.params.put("@{fieldFristLow}Equal", @{fieldFristLow});
+        return this;
+    }
+
+    /**
+     * 设置排序按属性：@{alias}
+     *
+     * @param isAsc 是否升序，否则为降序
+     */
+    public XXXQuery orderby@{fieldFristUp}(boolean isAsc) {
+        orderFields.add(new OrderField("@{column}", isAsc ? SortDirection.ASC : SortDirection.DESC));
+        return this;
+    }
+
+        fieldMap.put("@{column}", "@{fieldFristLow}");
+        
+=== mapper ===
+        <result property="@{fieldFristLow}" column="@{column}"/>
+        
+        @{column},
+        
+            <if test="@{fieldFristLow}Start != null">
+                AND @{column} &gt;= #{@{fieldFristLow}Start}
+            </if>
+            <if test="@{fieldFristLow}End != null">
+                AND @{column} &lt;= #{@{fieldFristLow}End}
+            </if>
+            <if test="@{fieldFristLow}Equal != null">
+                AND @{column} = #{@{fieldFristLow}Equal}
+            </if>
+
+                    <if test="item != null and item.fieldName == '@{column}'.toString()">@{column}</if>
+
+            <if test="@{fieldFristLow} != null ">,
+                @{column} = #{@{fieldFristLow}}
+            </if>
+
+            <if test="@{fieldFristLow} != null ">,
+                @{column}
+            </if>
+            <if test="@{fieldFristLow} != null">,
+                #{@{fieldFristLow}}
+            </if>

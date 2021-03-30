@@ -32,6 +32,12 @@ public enum SimpleTypeEnum implements Type {
 	 */
 	STRING_256("String", "VARCHAR", 256, false),
 
+
+	/**
+	 * 长文本
+	 */
+	TEXT("String", "TEXT", 0, false),
+
 	/**
 	 * 整形数字
 	 */
@@ -55,22 +61,18 @@ public enum SimpleTypeEnum implements Type {
 	/**
 	 * 日期
 	 */
-	DATE("String", "TIMESTAMP", 6, false),
+	DATE("String", "TIMESTAMP", 0, false),
 
 	/**
 	 * 日期（带时间）
 	 */
-	DATETIME("String", "TIMESTAMP", 6, false),
+	DATETIME("String", "TIMESTAMP", 0, false),
 
 	/**
 	 * 时间
 	 */
 	TIME("String", "CHAR", 10, false),
 
-	/**
-	 * 时间戳
-	 */
-	TIMESTAMP("Long", "TIMESTAMP", 6, false),
 
 	/**
 	 * 布尔型

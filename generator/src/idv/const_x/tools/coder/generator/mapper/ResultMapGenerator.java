@@ -35,7 +35,7 @@ public class ResultMapGenerator {
 			resultMapperPlus.append("<!-- 上级实体 -->\n");
 			resultMapperPlus.append("<resultMap id=\"parentResult\" type=\"").append(context.getEntity().toLowerCase()).append("\"> \n");
 			resultMapperPlus.append("  <id column=\"id\" jdbcType=\"DECIMAL\" property=\"id\" />\n");
-			resultMapperPlus.append("  <result column=\"modifyTime\" jdbcType=\"VARCHAR\" property=\"modifytime\" />\n");
+			resultMapperPlus.append("  <result column=\"modifyTime\" jdbcType=\"VARCHAR\" property=\"modified\" />\n");
 			resultMapperPlus.append("</resultMap>\n\n");
 		}
 		
@@ -123,8 +123,9 @@ public class ResultMapGenerator {
 				System.out.println("已将"+ context.getEntity() + "对应属性 " + field.getName() +" 自动关联到表：" + ctype.getRefTable() + " 请在Mapper文件中确认是否正确 ");
 			}else{
 				result.append("    <!-- ").append(alias).append(" -->\n");
-				result.append("    <result property=\"").append(field.getName()).append("\" javaType=\"").append(type.getJavaType())
-				.append("\" jdbcType=\"").append(field.getType().getJdbcType()).append("\" column=\"").append(field.getColumn().toUpperCase()).append("\" />\n");;
+				result.append("    <result property=\"").append(field.getName())
+//						.append("\" javaType=\"").append(type.getJavaType()).append("\" jdbcType=\"").append(field.getType().getJdbcType())
+				.append("\" column=\"").append(field.getColumn().toUpperCase()).append("\" />\n");;
 			}	
 		}
 	}

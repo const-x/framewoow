@@ -84,7 +84,11 @@ public class MysqlTableGenerator {
 			builder.append(" NOT NULL ");
 		}
 		if(field.getDefaultValue() != null && !type.isPremiryKey()){
-			builder.append(" DEFAULT '").append(field.getDefaultValue()).append("' ");
+			if (type.getJdbcType().equalsIgnoreCase("TIMESTAMP")) {
+				builder.append(" DEFAULT ").append(field.getDefaultValue()).append(" ");
+			}else {
+				builder.append(" DEFAULT '").append(field.getDefaultValue()).append("' ");
+			}
 		}
 		if(type.isPremiryKey()){
 			builder.append(" AUTO_INCREMENT ");

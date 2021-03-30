@@ -144,9 +144,11 @@ public class CodeGenerator {
 			field.setDisplay(false);
 			context.addField(field);
 			
-			 field = new Field("createtime", SimpleTypeEnum.TIMESTAMP, "创建时间", false, false);
+			 field = new Field("created", SimpleTypeEnum.DATETIME, "创建时间", false, false);
+			field.setDefaultValue("CURRENT_TIMESTAMP");
 			context.addField(field);
-			 field = new Field("modifytime", SimpleTypeEnum.TIMESTAMP, "最后修改时间", false, false);
+			 field = new Field("modified", SimpleTypeEnum.DATETIME, "最后修改时间", false, false);
+			field.setDefaultValue("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
 			context.addField(field);
 
 			String moduleFristlower =  context.getModule().substring(0, 1).toLowerCase() + context.getModule().substring(1);

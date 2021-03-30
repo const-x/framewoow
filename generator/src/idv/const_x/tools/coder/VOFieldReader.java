@@ -2,7 +2,15 @@ package idv.const_x.tools.coder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import idv.const_x.jdbc.DBType;
+import idv.const_x.jdbc.table.meta.EnumType;
+import idv.const_x.jdbc.table.meta.SimpleTypeEnum;
+import idv.const_x.tools.coder.generator.CodeGenerator;
+import idv.const_x.tools.coder.generator.Context;
+import idv.const_x.tools.coder.generator.Field;
 import org.apache.commons.lang3.StringUtils;
 
 
@@ -12,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import idv.const_x.file.search.FileLineReader;
 import idv.const_x.file.search.IFileReadHandler;
+
+import javax.swing.filechooser.FileSystemView;
 
 
 /**
@@ -179,4 +189,5 @@ public class VOFieldReader {
 			comment = null;
 		}
 	}
+
 }

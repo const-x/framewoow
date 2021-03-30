@@ -26,7 +26,7 @@ public interface @{entryFristUpper}Service {
     /**
      * 根据主键查询
      */
-    @{entryFristUpper} get@{entryFristUpper}ByKey(Long id);
+    @{entryFristUpper} get@{entryFristUpper}ByKey(String corpId,Long id);
 
     /**
      * 根据条件查询分页查询
@@ -64,7 +64,7 @@ public interface @{entryFristUpper}Service {
      *
      * @return
      */
-    Integer deleteByKey(Long id);
+    Integer deleteByKey(String corpId,Long id);
 
     /**
      * 根据企业删除

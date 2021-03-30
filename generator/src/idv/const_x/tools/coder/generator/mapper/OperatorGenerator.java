@@ -15,12 +15,12 @@ public class OperatorGenerator{
         this.context = context;
         String table = context.getTable().toUpperCase();
         Field premiry = null;
-        String modifytime = "modifytime";
+        String modifytime = "modified";
         for (Field data : context.getFields()) {
             if(data.getType().isPremiryKey()){
                 premiry = data;
             }
-            if(data.getName().equalsIgnoreCase("modifytime")){
+            if(data.getName().equalsIgnoreCase("modified")){
                 modifytime = data.getColumn();
             }
         }
@@ -67,13 +67,15 @@ public class OperatorGenerator{
 
         int counter = 0;
         for (Field data : context.getFields()) {
-            if(data.isEditable() || data.getName().equals("modifyer") ||data.getName().equals("modifytime")  ){
+            if(data.isEditable() || data.getName().equals("modifyer") ||data.getName().equals("modified")  ){
                 if(counter == 4){
                     update.append("\n           ");
                     counter = 0;
                 }
                 if(data.getType().isSimpleType()){
-                    update.append(data.getColumn()).append(" = #{").append(data.getName()).append(",jdbcType=").append(data.getType().getJdbcType()).append("},");
+                    update.append(data.getColumn()).append(" = #{").append(data.getName())
+//                            .append(",jdbcType=").append(data.getType().getJdbcType())
+                            .append("},");
                 }else{
                     ComplexType type = (ComplexType)data.getType();
                     if(type.getRelationship() == ComplexType.ONE_TO_ONE){
@@ -99,7 +101,7 @@ public class OperatorGenerator{
 
 
         for (Field data : context.getFields()) {
-            if(data.isEditable() || data.getName().equals("modifyer") ||data.getName().equals("modifytime")  ){
+            if(data.isEditable() || data.getName().equals("modifyer") ||data.getName().equals("modified")  ){
                 if(data.isPrimary()){
                     continue;
                 }
@@ -172,12 +174,12 @@ public class OperatorGenerator{
                 continue;
             }
             if(data.getType().isSimpleType()){
-                insert.append("            <if test=\"").append(data.getName()).append(" != null \">\n")
+                insert.append("            <if test=\"").append(data.getName()).append(" != null \">,\n")
                         .append("               ").append(data.getColumn()).append("\n            </if>\n");
             }else{
                 ComplexType type = (ComplexType)data.getType();
                 if(type.getRelationship() == ComplexType.ONE_TO_ONE){
-                    insert.append("            <if test=\"").append(data.getName()).append(" != null \">\n")
+                    insert.append("            <if test=\"").append(data.getName()).append(" != null \">,\n")
                             .append("               ").append(data.getColumn()).append("\n            </if>\n");
                 }
             }
@@ -188,12 +190,12 @@ public class OperatorGenerator{
                 continue;
             }
             if(data.getType().isSimpleType()){
-                insert.append("            <if test=\"").append(data.getName()).append(" != null \">\n")
+                insert.append("            <if test=\"").append(data.getName()).append(" != null \">,\n")
                         .append("                #{").append(data.getName()).append("}\n            </if>\n");
             }else{
                 ComplexType type = (ComplexType)data.getType();
                 if(type.getRelationship() == ComplexType.ONE_TO_ONE){
-                    insert.append("            <if test=\"").append(data.getName()).append(" != null \">\n")
+                    insert.append("            <if test=\"").append(data.getName()).append(" != null \">,\n")
                             .append("             #{").append(data.getName()).append(".id}\n            </if>\n");
                 }
             }

@@ -40,9 +40,9 @@ public class @{entryFristUpper}ServiceImpl implements @{entryFristUpper}Service 
     }
 
     @Override
-    public @{entryFristUpper} get@{entryFristUpper}ByKey(Long id) {
+    public @{entryFristUpper} get@{entryFristUpper}ByKey(String corpId,Long id) {
         try {
-            return @{entryFristUpper}Dao.get@{entryFristUpper}ByKey(id);
+            return @{entryFristUpper}Dao.get@{entryFristUpper}ByKey(corpId,id);
         } catch (SQLException e) {
             logger.error("dao get@{entryFristUpper}byKey error.:" + e.getMessage(), e);
         }
@@ -96,9 +96,9 @@ public class @{entryFristUpper}ServiceImpl implements @{entryFristUpper}Service 
     }
 
     @Override
-    public Integer deleteByKey(Long id) {
+    public Integer deleteByKey(String corpId,Long id) {
         try {
-            return @{entryFristUpper}Dao.deleteByKey(id);
+            return @{entryFristUpper}Dao.deleteByKey(corpId,id);
         } catch (SQLException e) {
             logger.error("dao deleteByKey error. :" + e.getMessage(), e);
         }

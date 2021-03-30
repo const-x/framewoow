@@ -46,7 +46,7 @@ public class POJOGenerator {
 				//如果没有指定枚举类名，则在本模块下创建
 				if(StringUtils.isBlank(enumtype.getClassName())){
 					String enumName = data.getName().substring(0, 1).toUpperCase() + data.getName().substring(1) + "Enum";
-					saveToFile = basepath +  "pojo" + File.separator + enumName + ".java";
+					saveToFile = basepath +  "enums" + File.separator + enumName + ".java";
 					file = FileUtils.createFile(saveToFile);
 					writer = new FileOutWriter(file,true);
 					files.add(file);
@@ -120,6 +120,14 @@ public class POJOGenerator {
 		builder.append("		area.setGroups(Arrays.asList(group));\n");
 		builder.append("		this.areas =Arrays.asList(area);\n");
 		builder.append("	}\n\n");
+
+
+		builder.append("	@Override\n");
+		builder.append("	public BaseQuery setCorpId(String corpId) {\n");
+		builder.append("		Condition condition = new Condition(\"corp_id\",Comparison.EQUAL,corpId);\n");
+		builder.append("		this.base.add(condition);\n");
+		builder.append("		return super.setCorpId(corpId);\n");
+		builder.append("	}\n\n");
 	
 		if(tree){
 			String classname = basepackage+"."+ module + ".entity."+ entry;
@@ -128,6 +136,9 @@ public class POJOGenerator {
 		
 		for (Field data : fields) {
 			if(data.isCondition()){
+				if(data.getName().equals("corpId")){
+					continue;
+				}
 				String uppder = CamelCaseUtils.toFristUpper(data.getName());
 				Type type = data.getType();
 				builder.append("	public ").append(entry).append("Query set").append(uppder).append("(").append(data.getType().getJavaType()).append(" ").append(data.getName()).append("){\n");
@@ -135,7 +146,7 @@ public class POJOGenerator {
 				builder.append("		this.base.add(condition);\n");
 				builder.append("		return this;\n");
 				builder.append("	}\n\n");
-				if(data.getType() == SimpleTypeEnum.DATETIME || data.getType() == SimpleTypeEnum.DATE|| data.getType() == SimpleTypeEnum.TIMESTAMP){
+				if(data.getType() == SimpleTypeEnum.DATETIME || data.getType() == SimpleTypeEnum.DATE){
 					builder.append("	public ").append(entry).append("Query set").append(uppder).append("Start(").append(data.getType().getJavaType()).append(" ").append(data.getName()).append("){\n");
 					builder.append("		Condition condition = new Condition(\"").append(data.getColumn()).append("\",Comparison.START,").append(data.getName()).append(");\n");
 					builder.append("		this.base.add(condition);\n");
@@ -179,8 +190,8 @@ public class POJOGenerator {
 
 		builder.append("import com.alibaba.fastjson.annotation.JSONField;\n");
 		builder.append("import com.alibaba.fastjson.annotation.JSONType;\n");
-		builder.append("import com.raycloud.yc.eco.ding.app.com.deploy.business.deploy.pojo.BusinessDeployBasePojo;\n");
-		extend = " extends BusinessDeployBasePojo" ;
+		builder.append("import com.raycloud.ding.commons.model.pojo.BasePojo;\n");
+		extend = " extends BasePojo" ;
 
 		List<String> imported = new ArrayList<String>();
 		for (Field data : fields) {
@@ -206,6 +217,12 @@ public class POJOGenerator {
 		
 		for (Field data : fields) {
 			String field = data.getName();
+//			if (data.isPrimary()){
+//				continue;
+//			}
+//			if (data.getName().equals("extendJson") || data.getName().equals("corpId")){
+//				continue;
+//			}
 
 			Type type = data.getType();
 			String javatype = data.getType().getJavaType();
@@ -226,6 +243,13 @@ public class POJOGenerator {
 		
 		for (Field data : fields) {
 			String field = data.getName();
+
+//			if (data.isPrimary()){
+//				continue;
+//			}
+//			if (data.getName().equals("extendJson") || data.getName().equals("corpId")){
+//				continue;
+//			}
 
 			Type type = data.getType();
 			String fieldtype = type.getJavaType();
@@ -257,7 +281,7 @@ public class POJOGenerator {
 	
 	private String createEnum(Field field,String enumName, String module,String basepackage ){
 		StringBuilder builder = new StringBuilder();
-		builder.append("package ").append(basepackage).append("." ).append(module).append(".pojo" ).append(";\n\n");
+		builder.append("package ").append(basepackage).append("." ).append(module).append(".enums" ).append(";\n\n");
 		
 		builder.append(" /**\n * ").append(field.getAlias()).append("枚举\n").append(" */ \n");
 		builder.append("  public enum ").append(enumName).append(" { \n\n ");
@@ -276,7 +300,7 @@ public class POJOGenerator {
 		builder.append("; \n\n");
 		builder.append("		private int value;\n");
 		builder.append("		private String name;\n\n");
-		builder.append("		public int getValue() {\n			return value;\n		}\n\n");
+		builder.append("		public Integer getValue() {\n			return value;\n		}\n\n");
 		builder.append("		public String getName() {\n			return name;\n		}\n\n");
 		builder.append("		private ").append(enumName).append("(int value, String name) {\n			this.value = value;\n			this.name = name;\n		}\n\n");
       

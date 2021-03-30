@@ -1,0 +1,66 @@
+=== mysql ===
+ALTER TABLE `@{tablename}`
+ADD COLUMN `@{column}` tinyint(1) NOT NULL DEFAULT 0 COMMENT '@{alias}';
+
+=== pojo ===
+    /** @{alias} **/
+    private @{type} @{fieldFristLow};
+
+    /** 获取 @{alias} **/
+    public @{type} get@{fieldFristUp}() {
+        return @{fieldFristLow};
+    }
+
+    /** 设置 @{alias} **/
+    public void set@{fieldFristUp}(@{type} @{fieldFristLow}) {
+        this.@{fieldFristLow} = @{fieldFristLow};
+    }
+
+=== queryer ===
+    /** @{alias} **/
+    private Boolean @{fieldFristLow};
+
+    public Boolean get@{fieldFristUp}() {
+        return @{fieldFristLow};
+    }
+
+    public XXXQuery set@{fieldFristUp}(Boolean @{fieldFristLow}) {
+        this.@{fieldFristLow} = @{fieldFristLow};
+        this.params.put("@{fieldFristLow}", @{fieldFristLow});
+        return this;
+    }
+
+    /**
+     * 设置排序按属性：@{alias}
+     *
+     * @param isAsc 是否升序，否则为降序
+     */
+    public XXXQuery orderby@{fieldFristUp}(boolean isAsc) {
+        orderFields.add(new OrderField("@{column}", isAsc ? SortDirection.ASC : SortDirection.DESC));
+        return this;
+    }
+
+        fieldMap.put("@{column}", "@{fieldFristLow}");
+        
+=== mapper ===
+        <result property="@{fieldFristLow}" column="@{column}"/>
+        
+        @{column},
+        
+            <if test="@{fieldFristLow} != null">
+                AND @{column} = #{@{fieldFristLow}}
+            </if>
+
+
+                    <if test="item != null and item.fieldName == '@{column}'.toString()">@{column}</if>
+
+            <if test="@{fieldFristLow} != null ">,
+                @{column} = #{@{fieldFristLow}}
+            </if>
+
+            <if test="@{fieldFristLow} != null ">,
+                @{column}
+            </if>
+            <if test="@{fieldFristLow} != null">,
+                #{@{fieldFristLow}}
+            </if>
